@@ -26,9 +26,10 @@ library(sf) # Pacote para manipulação de dados vetoriais (pontos, linhas, pol�
 cubo <- sits_cube(
   source     = "BDC", # Fonte dos cubos de dados
   collection = "SENTINEL-2-16D", # Coleção de imagens
-  tiles      = c("", "", ""), # Tiles/Regiões de ineteresse
-  start_date = "0", # Data inicial 
-  end_date   = "") # Data final 
+  tiles      = c("33016", "33018", "34016", "34017",
+                 "34018", "35015", "35016", "35017"), # Tiles/Regiões de ineteresse
+  start_date = "2024-01-01", # Data inicial 
+  end_date   = "1014-12-31") # Data final 
 
 ## Verificar bandas, tempos e outras informações do cubo 
 
@@ -52,7 +53,9 @@ cubo_amostras <- sits_get_data(
   cubo_tile034018_entorno_g4_2b, # Cubo geral com bandas e índices
   samples = "amostras_classes.shp", # Arquivo shapefile do tile 034018
   label_attr = "", # Coluna que indica as classes das amostras (pontos)
-  bands = c("", "", "", ""), 
+  bands = c("B01",   "B02",   "B03",   "B04",   "B05",   
+            "B06",   "B07",   "B08",   "B09",   "B11",   
+            "B12", "B8A"), 
   memsize = 8, # consumo de memória
   multicores = 2, # Número de núcleos usados. Quanto maior, mais rápido o processamento
   progress = TRUE) # Acompanhar carregamento

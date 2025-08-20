@@ -26,8 +26,8 @@ library(sf) # Pacote para manipulação de dados vetoriais (pontos, linhas, pol�
 cubo <- sits_cube(
   source     = "BDC", # Fonte dos cubos de dados
   collection = "SENTINEL-2-16D", # Coleção de imagens
-  tiles      = c("33016", "33018", "34016", "34017",
-                 "34018", "35015", "35016", "35017"), # Tiles/Regiões de ineteresse
+  tiles      = c("033016", "033018", "034016", "034017",
+                 "034018", "035015", "035016", "035017"), # Tiles/Regiões de ineteresse
   start_date = "2024-01-01", # Data inicial 
   end_date   = "2024-12-31") # Data final 
 

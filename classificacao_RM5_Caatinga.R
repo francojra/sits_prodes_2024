@@ -29,7 +29,7 @@ cubo <- sits_cube(
   tiles      = c("33016", "33018", "34016", "34017",
                  "34018", "35015", "35016", "35017"), # Tiles/Regiões de ineteresse
   start_date = "2024-01-01", # Data inicial 
-  end_date   = "1014-12-31") # Data final 
+  end_date   = "2024-12-31") # Data final 
 
 ## Verificar bandas, tempos e outras informações do cubo 
 
@@ -51,11 +51,11 @@ amostras_classes <- sf::read_sf("amostras_classes.shp")
 
 cubo_amostras <- sits_get_data(
   cubo_tile034018_entorno_g4_2b, # Cubo geral com bandas e índices
-  samples = "amostras_classes.shp", # Arquivo shapefile do tile 034018
-  label_attr = "", # Coluna que indica as classes das amostras (pontos)
+  samples = "", # Arquivo shapefile do tile 034018
+  label_attr = "label", # Coluna que indica as classes das amostras (pontos)
   bands = c("B01",   "B02",   "B03",   "B04",   "B05",   
             "B06",   "B07",   "B08",   "B09",   "B11",   
-            "B12", "B8A"), 
+            "B12", "B8A"), # NDVI, NBR, EVI
   memsize = 8, # consumo de memória
   multicores = 2, # Número de núcleos usados. Quanto maior, mais rápido o processamento
   progress = TRUE) # Acompanhar carregamento
@@ -82,25 +82,25 @@ plot(padroes_tempo_amostras)
 
 # Balanceamento de amostras -------------------------------------------------------------------------------------------------------------------------------
 
-cubo_amostras_bal <- sits_reduce_imbalance(
-  cubo_amostras,
-  n_samples_over = 100, 
-  n_samples_under = 100) 
-
-## Verificar proporção e nº de amostras balanceadas e não balanceadas
-
-summary(cubo_amostras) # Nº de amostras não balanceadas
-summary(cubo_amostras_bal) # Nº amostras balanceadas
+# cubo_amostras_bal <- sits_reduce_imbalance(
+#   cubo_amostras,
+#   n_samples_over = 100,
+#   n_samples_under = 100)
+# 
+# ## Verificar proporção e nº de amostras balanceadas e não balanceadas
+# 
+# summary(cubo_amostras) # Nº de amostras não balanceadas
+# summary(cubo_amostras_bal) # Nº amostras balanceadas
 
 # Análise SOM ---------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Definir cores das classes
 
-sits_colors_set(tibble(
-  name = c("supressao", "veg_natural", "", "","", "", "", ""),
-  color = c("#bf812d", "#01665e", "", "", "", "", "", "")))
-
-## Com balanceamento
+sits_colors_set(tibble(name = c("aflor_rocha", "queimada", "supressao", 
+                                "veg_natural", "agua"),
+                       color = c("#1A1A1A", "#D60C00", "#FAE9A0",
+                                 "#A6D96A", "#A1DDEF"))
+)
 
 som_cluster <- sits_som_map(
   data = cubo_amostras_bal, # SOM feito com grupo de amostras balanceadas (VERIFICAR!)
@@ -130,28 +130,28 @@ view(amostras_filt_neuro2)
 
 # Detectar ruídos das amostras ----------------------------------------------------------------------------------------------------------------------------
 
-all_samples <- sits_som_clean_samples(som_map = som_cluster, 
-                                      keep = c("clean", "analyze", "remove"))
-
-## Visualizar gráfico
-
-plot(all_samples)
-summary(all_samples) # Número de amostras (mesma quantidade das originais ou balanceadas)
+# all_samples <- sits_som_clean_samples(som_map = som_cluster, 
+#                                       keep = c("clean", "analyze", "remove"))
+# 
+# ## Visualizar gráfico
+# 
+# plot(all_samples)
+# summary(all_samples) # Número de amostras (mesma quantidade das originais ou balanceadas)
 
 # Remover amostras ruidosas -------------------------------------------------------------------------------------------------------------------------------
-
-samples_clean <- sits_som_clean_samples(som_cluster,
-                                        keep = c("clean", "analyze"))
-
-## Visualizar gráfico
-
-plot(samples_clean)
-summary(samples_clean) # Número de amostras após filtro
+# 
+# samples_clean <- sits_som_clean_samples(som_cluster,
+#                                         keep = c("clean", "analyze"))
+# 
+# ## Visualizar gráfico
+# 
+# plot(samples_clean)
+# summary(samples_clean) # Número de amostras após filtro
 
 # Ver diferenças na quantidade de amostras antes e após filtragem -----------------------------------------------------------------------------------------
 
-summary(all_samples)
-summary(samples_clean) 
+# summary(all_samples)
+# summary(samples_clean) 
 
 # Gerar SOM dos dados sem ruídos --------------------------------------------------------------------------------------------------------------------------
 
@@ -175,17 +175,17 @@ plot(som_cluster_limpo, band = "B11")
 ## Função de avaliação
 
 avaliacao_som <- sits_som_evaluate_cluster(som_cluster)
-avaliacao_som_limpo <- sits_som_evaluate_cluster(som_cluster_limpo)
+# avaliacao_som_limpo <- sits_som_evaluate_cluster(som_cluster_limpo)
 
 ## Gráficos
 
 plot(avaliacao_som)
-plot(avaliacao_som_limpo)
+# plot(avaliacao_som_limpo)
 
 ## Resultados das avaliações
 
 avaliacao_som 
-avaliacao_som_limpo
+# avaliacao_som_limpo
 
 # Classificações ------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -229,6 +229,7 @@ dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 probs_class <- sits_classify(
   data = cubo_indices_bandas, 
   ml_model = rf_model,
+  exclusion_mask = 
   multicores = 3,
   memsize = 8,
   output_dir = tempdir_r)
@@ -297,9 +298,11 @@ map_class <- readRDS("map_class.rds")
 
 ### Definir cores das classes
 
-sits_colors_set(tibble(
-  name = c("supressao", "veg_natural", "", "","", "", "", ""),
-  color = c("#bf812d", "#01665e", "", "", "", "", "", "")))
+sits_colors_set(tibble(name = c("aflor_rocha", "queimada", "supressao", 
+                                "veg_natural", "agua"),
+                       color = c("#1A1A1A", "#D60C00", "#FAE9A0",
+                                 "#A6D96A", "#A1DDEF"))
+)
 
 plot(map_class)
 class(map_class)
@@ -320,75 +323,3 @@ map_incerteza <- sits_uncertainty(
 ## Visualizar mapa de incerteza
 
 plot(map_incerteza) 
-
-# Adicionar máscara com reclassificação do SITS -----------------------------------------------------------------------------------------------------------
-
-tempdir_r <- "map_final_classificado"
-dir.create(tempdir_r, showWarnings = FALSE)
-
-## Gerar cubo do mapa classificado 
-
-cubo_map_class <- sits_cube(
-  source = "BDC",
-  collection = "SENTINEL-2-16D",
-  data_dir = tempdir_r, # A imagem classificada deve estar nesta pasta
-  parse_info = c("satellite", "sensor", 
-                 "tile", "start_date", "end_date",
-                 "band", "version"),
-  bands = "class",
-  labels = c("1" = "supressao", # Definir os pixels da imagem
-             "2" = "veg_natural"))
-
-view(cubo_map_class)
-
-## Visualizar mapa do cubo
-
-plot(cubo_map_class)
-
-## Gerar cubo da máscara PRODES
-
-tempdir_r <- "cl_reclassification"
-dir.create(tempdir_r, showWarnings = FALSE)
-
-## A imagem em formato .tif da máscara deve estar na pasta 'cl_reclassification'
-## e conter as informações citadas em "parse_info" do cubo abaixo:
-
-masc_prodes <- sits_cube(
-  source = "BDC",
-  collection = "SENTINEL-2-16D",
-  tiles      = "034018",
-  data_dir = tempdir_r,
-  parse_info = c("product", "sensor", 
-                 "tile", "start_date", "end_date",
-                 "band", "version"),
-  bands = "class",
-  version = "v22", # Versão do mapa PRODES para não confundir com mapa classificado
-  labels = c("1" = "mascara", "2" = "NA")) # Verificar pixel da máscara, talvez reclassificar pixels
-
-view(masc_prodes)
-
-plot(masc_prodes)
-
-## Junção mapa classificado com máscara PRODES - Reclassificação
-
-tempdir_r <- "cl_reclassification1"
-dir.create(tempdir_r, showWarnings = FALSE)
-
-reclas_masc_map_class <- sits_reclassify(
-  cube = cubo_map_class, # Cubo do mapa classificado
-  mask = prodes_2020_2B, # Cubo da máscara PRODES
-  rules = list("Mascara_PRODES_2000-2019" = mask == "mascara",
-               "Supressao" = cube == "supressao",
-               "Vegetacao_natural" = cube == "veg_natural"), # VERIFICAR
-  multicores = 7,
-  output_dir = tempdir_r,
-  version = "reclass")
-
-sits_colors_set(tibble(
-  name = c("Mascara_PRODES", "Supressao","Vegetacao_natural","", "", "", "", ""),
-  color = c("white", "#bf812d", "#01665e","", "", "", "", "")))
-
-plot(reclas_masc_map_class,
-     legend_text_size = 0.7, 
-     legend_position = "outside",
-     scale = 1.0)

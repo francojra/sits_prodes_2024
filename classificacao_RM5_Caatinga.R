@@ -45,19 +45,20 @@ cubo <- readRDS("cubo.rds")
 
 # Ler arquivo .shp com amostras por classes ---------------------------------------------------------------------------------------------------------------
 
-amostras_classes <- sf::read_sf("amostras_classes.shp")
+amostras_classes <- sf::read_sf("amostras_RM_5_caatinga.shp")
+view(amostras_classes)
 
 # Adicionar amostras ao cubo de dados criado --------------------------------------------------------------------------------------------------------------
 
 cubo_amostras <- sits_get_data(
-  cubo_tile034018_entorno_g4_2b, # Cubo geral com bandas e índices
-  samples = "", # Arquivo shapefile do tile 034018
+  cubo, # Cubo geral com bandas e índices
+  samples = "amostras_RM_5_caatinga.shp", # Arquivo shapefile do tile 034018
   label_attr = "label", # Coluna que indica as classes das amostras (pontos)
   bands = c("B01",   "B02",   "B03",   "B04",   "B05",   
             "B06",   "B07",   "B08",   "B09",   "B11",   
-            "B12", "B8A"), # NDVI, NBR, EVI
-  memsize = 8, # consumo de memória
-  multicores = 2, # Número de núcleos usados. Quanto maior, mais rápido o processamento
+            "B12", "B8A", "EVI", "NBR", "NDVI"), # Seleção de bandas e índices
+  memsize = 64, # consumo de memória
+  multicores = 20, # Número de núcleos usados. Quanto maior, mais rápido o processamento
   progress = TRUE) # Acompanhar carregamento
 
 ## Verificar informações do cubo com amostras
@@ -75,10 +76,14 @@ cubo_amostras <- readRDS("cubo_amostras.rds")
 
 padroes_tempo_amostras <- sits_patterns(cubo_amostras) # Média harmônica das séries temporais 
 view(padroes_tempo_amostras$time_series[[1]])
+view(padroes_tempo_amostras)
 
 ## Gráfico
 
-plot(padroes_tempo_amostras)
+p <- plot(padroes_tempo_amostras)
+p + theme_bw() +
+  theme(legend.position = "right",
+        axis.text = element_text(color = "black"))
 
 # Balanceamento de amostras -------------------------------------------------------------------------------------------------------------------------------
 
@@ -103,19 +108,27 @@ sits_colors_set(tibble(name = c("aflor_rocha", "queimada", "supressao",
 )
 
 som_cluster <- sits_som_map(
-  data = cubo_amostras_bal, # SOM feito com grupo de amostras balanceadas (VERIFICAR!)
-  grid_xdim = 10, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
-  grid_ydim = 10, # Grade eixo y
+  data = cubo_amostras, # SOM feito com grupo de amostras balanceadas (VERIFICAR!)
+  grid_xdim = 12, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
+  grid_ydim = 12, # Grade eixo y
   distance = "dtw", # Método de calcular a distância,
   mode = "pbatch", # Gera o mesmo mapa SOM a cada run
   rlen = 20) # Número de iterações (quantidade de vezes que o mapa é gerado)
 
 ## Visualizar mapa SOM
 
-windows(width = 9, height = 7)
-plot(som_cluster, band = "DBSI") 
-plot(som_cluster, band = "NDII")
+plot(som_cluster, band = "B01") 
+plot(som_cluster, band = "B02")
+plot(som_cluster, band = "B03")
+plot(som_cluster, band = "B04") 
+plot(som_cluster, band = "B05")
+plot(som_cluster, band = "B06")
+plot(som_cluster, band = "B07") 
+plot(som_cluster, band = "B08")
+plot(som_cluster, band = "B09")
 plot(som_cluster, band = "B11")
+plot(som_cluster, band = "B12")
+plot(som_cluster, band = "B8A")
 
 # Seleção de neurônios no SOM -----------------------------------------------------------------------------------------------------------------------------
 
@@ -130,45 +143,55 @@ view(amostras_filt_neuro2)
 
 # Detectar ruídos das amostras ----------------------------------------------------------------------------------------------------------------------------
 
-# all_samples <- sits_som_clean_samples(som_map = som_cluster, 
-#                                       keep = c("clean", "analyze", "remove"))
-# 
-# ## Visualizar gráfico
-# 
-# plot(all_samples)
-# summary(all_samples) # Número de amostras (mesma quantidade das originais ou balanceadas)
+all_samples <- sits_som_clean_samples(som_map = som_cluster,
+                                      keep = c("clean", "analyze", "remove"))
+
+## Visualizar gráfico
+
+p1 <- plot(all_samples)
+p1 + theme_bw() +
+  theme(axis.text = element_text(color = "black"),
+        axis.title = element_blank(),
+        legend.position = "bottom")
+
+summary(all_samples) # Número de amostras (mesma quantidade das originais ou balanceadas)
 
 # Remover amostras ruidosas -------------------------------------------------------------------------------------------------------------------------------
-# 
-# samples_clean <- sits_som_clean_samples(som_cluster,
-#                                         keep = c("clean", "analyze"))
-# 
-# ## Visualizar gráfico
-# 
-# plot(samples_clean)
-# summary(samples_clean) # Número de amostras após filtro
+
+samples_clean <- sits_som_clean_samples(som_cluster,
+                                        keep = c("clean", "analyze"))
+
+## Visualizar gráfico
+
+p2 <- plot(samples_clean)
+p2 + theme_bw() +
+  theme(axis.text = element_text(color = "black"),
+        axis.title = element_blank(),
+        legend.position = "bottom")
+
+summary(samples_clean) # Número de amostras após filtro
 
 # Ver diferenças na quantidade de amostras antes e após filtragem -----------------------------------------------------------------------------------------
 
-# summary(all_samples)
-# summary(samples_clean) 
+summary(all_samples)
+summary(samples_clean)
 
 # Gerar SOM dos dados sem ruídos --------------------------------------------------------------------------------------------------------------------------
 
-som_cluster_limpo <- sits_som_map(
-  data = samples_clean, # SOM feito com o nosso grupo de amostras 
-  grid_xdim = 10, # Aqui é 10 x 10 para gerar 100 neurônios
-  grid_ydim = 10,
-  mode = "pbatch", # Gera o mesmo mapa SOM a cada run
-  distance = "dtw", # Método para calcular a distância
-  rlen = 20) # Número de iterações
-
-## Visualizar mapa SOM limpo
-
-windows(width = 9, height = 7)
-plot(som_cluster_limpo, band = "DBSI")
-plot(som_cluster_limpo, band = "NDVI")
-plot(som_cluster_limpo, band = "B11")
+# som_cluster_limpo <- sits_som_map(
+#   data = samples_clean, # SOM feito com o nosso grupo de amostras 
+#   grid_xdim = 10, # Aqui é 10 x 10 para gerar 100 neurônios
+#   grid_ydim = 10,
+#   mode = "pbatch", # Gera o mesmo mapa SOM a cada run
+#   distance = "dtw", # Método para calcular a distância
+#   rlen = 20) # Número de iterações
+# 
+# ## Visualizar mapa SOM limpo
+# 
+# windows(width = 9, height = 7)
+# plot(som_cluster_limpo, band = "DBSI")
+# plot(som_cluster_limpo, band = "NDVI")
+# plot(som_cluster_limpo, band = "B11")
 
 # Avaliar matriz de confusão das amostras antes e após filtragem ------------------------------------------------------------------------------------------
 
@@ -179,7 +202,9 @@ avaliacao_som <- sits_som_evaluate_cluster(som_cluster)
 
 ## Gráficos
 
-plot(avaliacao_som)
+p3 <- plot(avaliacao_som) 
+p3 + theme(axis.text = element_text(color = "black"))
+
 # plot(avaliacao_som_limpo)
 
 ## Resultados das avaliações
@@ -191,9 +216,9 @@ avaliacao_som
 
 ## Leitura do cubo criado com bandas e índices
 
-cubo_indices_bandas <- readRDS("cubo_indices_bandas.rds")
+cubo <- readRDS("cubo.rds")
 
-view(cubo_indices_bandas)
+view(cubo)
 
 # Treinar modelo Random Forest ----------------------------------------------------------------------------------------------------------------------------
 
@@ -202,7 +227,7 @@ view(cubo_indices_bandas)
 set.seed(03024)
 
 rf_model <- sits_train(
-  samples = samples_clean, # Se precisar de amostras originais --> all_samples 
+  samples = all_samples, # Se precisar de amostras originais --> all_samples 
   ml_method = sits_rfor()) # Modelo Random Forest
 
 ## Gráfico com as variávies mais importantes do modelo
@@ -214,30 +239,86 @@ plot(rf_model)
 set.seed(333)
 
 rfor_valid <- sits_kfold_validate(
-  samples    = samples_clean,
+  samples    = all_samples,
   folds      = 5, 
   ml_method  = sits_rfor(),
   multicores = 5)
 
 rfor_valid 
 
+# Preparar máscara ----------------------------------------------------------------------------
+
+# Ler cubo e CRS dos tiles
+
+view(cubo)
+class(cubo)
+crs(cubo[1, ]$crs) # CRS do primeiro tile
+
+# Ler máscara
+
+mask_sf <- read_sf("033016.shp")
+
+class(mask_sf)
+view(mask_sf)
+crs(mask_sf) # CRS da máscara
+
+# Verificar validade da máscara
+
+mask_sf <- sf::st_make_valid(mask_sf) # Validade da topologia
+sf::st_geometry_type(mask_sf) # Verificar tipo de geometria, deve ser multipoligon ou poligon
+
+# Tornar máscara e CRS dos tiles iguais
+
+mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[1,]$crs))
+mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[2,]$crs))
+mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[3,]$crs))
+mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[4,]$crs))
+mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[5,]$crs))
+mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[6,]$crs))
+mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[7,]$crs))
+mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[8,]$crs))
+
+crs(mask_sf)
+crs(cubo[1, ]$crs) # CRS do primeiro tile
+crs(cubo[2, ]$crs) # CRS do primeiro tile
+crs(cubo[3, ]$crs) # CRS do primeiro tile
+crs(cubo[4, ]$crs) # CRS do primeiro tile
+crs(cubo[5, ]$crs) # CRS do primeiro tile
+crs(cubo[6, ]$crs) # CRS do primeiro tile
+crs(cubo[7, ]$crs) # CRS do primeiro tile
+crs(cubo[8, ]$crs) # CRS do primeiro tile
+
 # Produzir mapas de probabilidades por classes ------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mapa_prob"
+tempdir_r <- "mapa_prob1"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
-probs_class <- sits_classify(
-  data = cubo_indices_bandas, 
+probs_class1 <- sits_classify(
+  data = cubo, 
   ml_model = rf_model,
-  exclusion_mask = 
-  multicores = 3,
-  memsize = 8,
+  exclusion_mask = mask_sf,
+  multicores = 20,
+  memsize = 64,
   output_dir = tempdir_r)
 
 ## Salvar dados dos mapas de probabilidades
 
-saveRDS(probs_class, file = "probs_class.rds")
-probs_class <- readRDS("probs_class.rds")
+saveRDS(probs_class1, file = "probs_class1.rds")
+probs_class1 <- readRDS("probs_class1.rds")
+view(probs_class1)
+view(probs_class1[1, ]) # Visualizar dados do primeiro tile
+view(probs_class1[1:2, ]) # Visualizar dados do primeiro e segundo tile
+
+## Mapa
+
+plot(probs_class[1, ])
+plot(probs_class[2, ])
+plot(probs_class[3, ])
+plot(probs_class[4, ])
+plot(probs_class[5, ])
+plot(probs_class[6, ])
+plot(probs_class[7, ])
+plot(probs_class[8, ])
 
 # Unir tiles com sits_mosaic() ----------------------------------------------------------------------------------------------------------------------------
 
@@ -246,14 +327,15 @@ dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 mosaico_probs <- sits_mosaic(probs_class,
                              output_dir = tempdir_r,
-                             multicores = 7,
+                             multicores = 28, 
                              progress   = TRUE)
 
 view(mosaico_probs)
 
 ## Visualizar tiles juntos em único mapa
 
-plot(mosaico_probs)
+plot(mosaico_probs, labels = "agua")
+plot(mosaico_probs, labels = "aflor_rocha")
 
 ## Salvar dados do mosaico de probabilidades
 
@@ -267,8 +349,8 @@ dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 smooth_probs <- sits_smooth(
   cube = mosaico_probs,
-  multicores = 7,
-  memsize = 15,
+  multicores = 20,
+  memsize = 64,
   output_dir = tempdir_r)
 
 plot(smooth_probs)
@@ -286,8 +368,8 @@ dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 map_class <- sits_label_classification(
   cube = smooth_probs, 
   output_dir = tempdir_r, 
-  memsize = 15,
-  multicores = 7)
+  memsize = 64,
+  multicores = 20)
 
 ## Salvar dados do cubo classificado
 
@@ -304,8 +386,9 @@ sits_colors_set(tibble(name = c("aflor_rocha", "queimada", "supressao",
                                  "#A6D96A", "#A1DDEF"))
 )
 
-plot(map_class)
-class(map_class)
+plot(map_class,
+     legend_position = "outside",
+     scale = 1.0)
 
 # Mapa de incerteza ---------------------------------------------------------------------------------------------------------------------------------------
 
@@ -316,10 +399,23 @@ map_incerteza <- sits_uncertainty(
   cube = mosaico_probs, # Arquivo do cubo de probabilidades com mosaico
   type = "margin",
   output_dir = tempdir_r,
-  memsize = 12,
-  multicores = 4,
+  memsize = 64,
+  multicores = 20,
   progress = TRUE)
 
 ## Visualizar mapa de incerteza
 
-plot(map_incerteza) 
+plot(map_incerteza, legend_position = "outside") 
+
+# Classificação por tiles ---------------------------------------------------------------------
+
+tempdir_r <- "mosaico_prob_suav1"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+smooth_probs1 <- sits_smooth(
+  cube = probs_class,
+  multicores = 20,
+  memsize = 64,
+  output_dir = tempdir_r)
+
+plot(smooth_probs1)

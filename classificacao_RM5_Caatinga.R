@@ -256,7 +256,7 @@ crs(cubo[1, ]$crs) # CRS do primeiro tile
 
 # Ler máscara
 
-mask_sf <- read_sf("033016.shp")
+mask_sf <- read_sf("PRODES_2000_2023_+_RESIDUOS_RM5.shp")
 
 class(mask_sf)
 view(mask_sf)
@@ -267,75 +267,99 @@ crs(mask_sf) # CRS da máscara
 mask_sf <- sf::st_make_valid(mask_sf) # Validade da topologia
 sf::st_geometry_type(mask_sf) # Verificar tipo de geometria, deve ser multipoligon ou poligon
 
-# Tornar máscara e CRS dos tiles iguais
+# Tornar máscara para o CRS dos tiles 
 
-mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[1,]$crs))
-mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[2,]$crs))
-mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[3,]$crs))
-mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[4,]$crs))
-mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[5,]$crs))
-mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[6,]$crs))
-mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[7,]$crs))
-mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo[8,]$crs))
+mask_sf <- sf::st_transform(mask_sf, sf::st_crs(cubo$crs[1]))
+view(mask_sf)
+mask_sf <- st_geometry(mask_sf)
+plot(mask_sf)
 
-crs(mask_sf)
-crs(cubo[1, ]$crs) # CRS do primeiro tile
-crs(cubo[2, ]$crs) # CRS do primeiro tile
-crs(cubo[3, ]$crs) # CRS do primeiro tile
-crs(cubo[4, ]$crs) # CRS do primeiro tile
-crs(cubo[5, ]$crs) # CRS do primeiro tile
-crs(cubo[6, ]$crs) # CRS do primeiro tile
-crs(cubo[7, ]$crs) # CRS do primeiro tile
-crs(cubo[8, ]$crs) # CRS do primeiro tile
+# Salvar shp
+
+sf::st_write(mask_sf, "mask_sf.shp")
+
+mask_sf <- read_sf("mask_sf.shp")
+
+# # Fazer o dissolve da máscara
+# 
+# sf::sf_use_s2(FALSE)  # evita enrosco do S2 durante a limpeza/dissolve
+# 
+# v <- terra::vect(mask_sf)
+# v <- terra::makeValid(v)
+# 
+# # dissolve todas as feições (sem precisar de campo, funde tudo em uma só)
+# 
+# v <- terra::aggregate(v)
+# 
+# # limpar microproblemas
+# v <- terra::buffer(v, 0)
+# 
+# # voltar para sf
+# mask <- sf::st_as_sf(v) |>
+#   sf::st_make_valid()
+# 
+# plot(mask)
+# 
+# sf::st_write(mask, "Prodes_2024/Mascaras/RM5/Mascara_corrigida/mask_rm5_final.shp")
+# 
+# #Ao abrir em nova sessão
+# 
+# mascara_rm5 <- sf::st_read("Prodes_2024/Mascaras/RM5/Mascara_corrigida/mask_rm5_final.shp")
+# 
+# plot(mascara_rm5)
 
 # Produzir mapas de probabilidades por classes ------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mapa_prob1"
+tempdir_r <- "mapa_prob_rm5"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 probs_class1 <- sits_classify(
   data = cubo, 
   ml_model = rf_model,
   exclusion_mask = mask_sf,
-  multicores = 20,
-  memsize = 64,
+  multicores = 25,
+  memsize = 75,
   output_dir = tempdir_r)
 
 ## Salvar dados dos mapas de probabilidades
 
 saveRDS(probs_class1, file = "probs_class1.rds")
 probs_class1 <- readRDS("probs_class1.rds")
+
 view(probs_class1)
 view(probs_class1[1, ]) # Visualizar dados do primeiro tile
 view(probs_class1[1:2, ]) # Visualizar dados do primeiro e segundo tile
 
 ## Mapa
 
-plot(probs_class[1, ])
-plot(probs_class[2, ])
-plot(probs_class[3, ])
-plot(probs_class[4, ])
-plot(probs_class[5, ])
-plot(probs_class[6, ])
-plot(probs_class[7, ])
-plot(probs_class[8, ])
+plot(probs_class1[1, ])
+plot(probs_class1[2, ])
+plot(probs_class1[3, ])
+plot(probs_class1[4, ])
+plot(probs_class1[5, ])
+plot(probs_class1[6, ])
+plot(probs_class1[7, ])
+plot(probs_class1[8, ])
 
 # Unir tiles com sits_mosaic() ----------------------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mosaico_probs"
+tempdir_r <- "mosaico_probs1"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
-mosaico_probs <- sits_mosaic(probs_class,
+mosaico_probs <- sits_mosaic(probs_class1,
                              output_dir = tempdir_r,
-                             multicores = 28, 
+                             multicores = 30, 
                              progress   = TRUE)
 
 view(mosaico_probs)
 
 ## Visualizar tiles juntos em único mapa
 
-plot(mosaico_probs, labels = "agua")
-plot(mosaico_probs, labels = "aflor_rocha")
+plot(mosaico_probs, labels = "agua", palette = "Blues")
+plot(mosaico_probs, labels = "aflor_rocha", palette = "Greys")
+plot(mosaico_probs, labels = "veg_natural", palette = "BuGn")
+plot(mosaico_probs, labels = "supressao", palette = "YlOrBr")
+plot(mosaico_probs, labels = "queimada", palette = "Reds")
 
 ## Salvar dados do mosaico de probabilidades
 
@@ -344,21 +368,26 @@ mosaico_probs <- readRDS("mosaico_probs.rds")
 
 # Suavização dos mapas de probabilidades ------------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mosaico_prob_suav"
+tempdir_r <- "mosaico_prob_suav_rm5"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
-smooth_probs <- sits_smooth(
+smooth_probs_rm5 <- sits_smooth(
   cube = mosaico_probs,
   multicores = 20,
   memsize = 64,
   output_dir = tempdir_r)
 
-plot(smooth_probs)
+plot(smooth_probs_rm5)
+plot(smooth_probs_rm5, labels = "supressao", palette = "YlOrBr")
+plot(smooth_probs_rm5, labels = "veg_natural", palette = "Greens")
+plot(smooth_probs_rm5, labels = "queimada", palette = "Reds")
+plot(smooth_probs_rm5, labels = "aflor_rocha", palette = "Greys")
+plot(smooth_probs_rm5, labels = "agua", palette = "Blues")
 
 ## Salvar dados do cubo suavizado
 
-saveRDS(smooth_probs, file = "smooth_probs.rds")
-smooth_probs <- readRDS("smooth_probs.rds")
+saveRDS(smooth_probs_rm5, file = "smooth_probs_rm5.rds")
+smooth_probs_rm5 <- readRDS("smooth_probs_rm5.rds")
 
 # Rotulando o cubo de probabilidades - Classificação do mapa final ----------------------------------------------------------------------------------------
 
@@ -366,7 +395,7 @@ tempdir_r <- "map_classificado"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 map_class <- sits_label_classification(
-  cube = smooth_probs, 
+  cube = mosaico_probs, 
   output_dir = tempdir_r, 
   memsize = 64,
   multicores = 20)

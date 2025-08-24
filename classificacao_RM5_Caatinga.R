@@ -444,19 +444,5 @@ map_incerteza <- sits_uncertainty(
 ## Visualizar mapa de incerteza
 
 plot(map_incerteza, 
-     legend_position = "outside", 
-     palette = "Greys", 
-     rev = FALSE)
+     legend_position = "outside", rev = FALSE) # rev = FALSE
 
-# Classificação por tiles ---------------------------------------------------------------------
-
-tempdir_r <- "mosaico_prob_suav1"
-dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
-
-smooth_probs1 <- sits_smooth(
-  cube = probs_class,
-  multicores = 20,
-  memsize = 64,
-  output_dir = tempdir_r)
-
-plot(smooth_probs1)

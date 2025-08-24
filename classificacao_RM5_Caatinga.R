@@ -2723,24 +2723,3 @@ ggplot() +
 # coord_sf(crs = 3857) +
 # scale_fill_viridis_d(alpha = 0.7)
 
-
-
-
-",  # cor mais clara
-    high = "darkred"   # cor mais escura
-) +
-  geom_sf(data = mask_sf, fill = "black", color = "black") +
-  theme_bw() +
-  labs(title = "Mapa de Incerteza")
-  
-# Exemplo da documentação do pacote
-
-  # ggplot(cyl_sf) +
-  # geom_spatraster_rgb(data = tile) +
-  # geom_sf(aes(fill = iso2)) +
-  # coord_sf(crs = 3857) +
-  # scale_fill_viridis_d(alpha = 0.7)
-  
-
-
-

@@ -48,10 +48,6 @@ cubo <- readRDS("cubo.rds")
 amostras_classes <- sf::read_sf("amostras_RM_5_caatinga.shp")
 view(amostras_classes)
 
-amostras_classes <- amostras_classes |>
-  mutate(label = case_when(label == "aflor_rocha" ~ "abiotico",
-                           TRUE ~ label))
-
 # Adicionar amostras ao cubo de dados criado --------------------------------------------------------------------------------------------------------------
 
 cubo_amostras <- sits_get_data(
@@ -75,6 +71,11 @@ sits_labels(cubo_amostras)
 
 saveRDS(cubo_amostras, file = "cubo_amostras.rds") 
 cubo_amostras <- readRDS("cubo_amostras.rds")
+view(cubo_amostras)
+
+cubo_amostras <- cubo_amostras |>
+  mutate(label = case_when(label == "aflor_rocha" ~ "abiotico",
+                           TRUE ~ label))
 
 # Visualizar padrões de séries temporais por classe -------------------------------------------------------------------------------------------------------
 
@@ -105,7 +106,7 @@ p + theme_bw() +
 
 ## Definir cores das classes
 
-sits_colors_set(tibble(name = c("aflor_rocha", "queimada", "supressao", 
+sits_colors_set(tibble(name = c("abiotico", "queimada", "supressao", 
                                 "veg_natural", "agua"),
                        color = c("#1A1A1A", "#D60C00", "#FAE9A0",
                                  "#A6D96A", "#A1DDEF"))

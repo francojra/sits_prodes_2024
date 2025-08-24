@@ -2691,8 +2691,17 @@ unique(values(mapa_incert_final))
 unique(is.na(values(mapa_incert_final))) # Mapa não tem valor NA
 
 # Definir maior valor de incerteza que é na área externa do mapa como NA
+# Áreas externas do mapa = máscara + áreas fora dos tiles
 
 mapa_incert_final[mapa_incert_final == 10000] <- NA
+
+# Visualizar área externa
+
+unique(is.na(values(mapa_incert_final)))
+plot(mapa_incert_final)
+plot(is.na(values(mapa_incert_final)))
+
+# Carregar pacotes para produzir mapa de incerteza e máscara com ggplot2
 
 install.packages("tidyterra")
 library(tidyterra) # Pacote para inserir raster no ggplot2
@@ -2709,7 +2718,7 @@ ggplot() +
   geom_spatraster(data = mapa_incert_final) +
   scale_fill_gradient(na.value = "white", 
                       low  = "#7fbc41",  # cor mais clara
-                      high = "#de2d26"   # cor mais escura
+                      high = "red"   # cor mais escura
   ) +
   geom_sf(data = mask_sf, fill = "black", color = "black") +
   theme_bw() +

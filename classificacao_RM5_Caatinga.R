@@ -48,6 +48,10 @@ cubo <- readRDS("cubo.rds")
 amostras_classes <- sf::read_sf("amostras_RM_5_caatinga.shp")
 view(amostras_classes)
 
+amostras_classes <- amostras_classes |>
+  mutate(label = case_when(label == "aflor_rocha" ~ "abiotico",
+                           TRUE ~ label))
+
 # Adicionar amostras ao cubo de dados criado --------------------------------------------------------------------------------------------------------------
 
 cubo_amostras <- sits_get_data(
@@ -57,7 +61,7 @@ cubo_amostras <- sits_get_data(
   bands = c("B01",   "B02",   "B03",   "B04",   "B05",   
             "B06",   "B07",   "B08",   "B09",   "B11",   
             "B12", "B8A", "EVI", "NBR", "NDVI"), # Seleção de bandas e índices
-  memsize = 64, # consumo de memória
+  memsize = 70, # consumo de memória
   multicores = 20, # Número de núcleos usados. Quanto maior, mais rápido o processamento
   progress = TRUE) # Acompanhar carregamento
 

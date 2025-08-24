@@ -317,8 +317,8 @@ probs_class1 <- sits_classify(
   data = cubo, 
   ml_model = rf_model,
   exclusion_mask = mask_sf,
-  multicores = 25,
-  memsize = 75,
+  multicores = 20,
+  memsize = 70,
   output_dir = tempdir_r)
 
 ## Salvar dados dos mapas de probabilidades
@@ -374,7 +374,7 @@ dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 smooth_probs_rm5 <- sits_smooth(
   cube = mosaico_probs,
   multicores = 20,
-  memsize = 64,
+  memsize = 70,
   output_dir = tempdir_r)
 
 plot(smooth_probs_rm5)
@@ -395,7 +395,7 @@ tempdir_r <- "map_classificado"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 map_class <- sits_label_classification(
-  cube = mosaico_probs, 
+  cube = smooth_probs_rm5, # mosaico_probs
   output_dir = tempdir_r, 
   memsize = 64,
   multicores = 20)

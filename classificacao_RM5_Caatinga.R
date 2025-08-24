@@ -404,6 +404,7 @@ map_class <- sits_label_classification(
 
 saveRDS(map_class, file = "map_class.rds")
 map_class <- readRDS("map_class.rds")
+view(map_class)
 
 ## Visualizar mapa classificado
 

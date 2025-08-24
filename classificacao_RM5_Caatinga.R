@@ -405,12 +405,19 @@ map_class <- sits_label_classification(
 saveRDS(map_class, file = "map_class.rds")
 map_class <- readRDS("map_class.rds")
 view(map_class)
+class(map_class)
+
+map_class <- map_class %>%
+  mutate(labels = map(labels, ~ {
+    .x[.x == "aflor_rocha"] <- "abiotico"
+    .x
+  }))
 
 ## Visualizar mapa classificado
 
 ### Definir cores das classes
 
-sits_colors_set(tibble(name = c("aflor_rocha", "queimada", "supressao", 
+sits_colors_set(tibble(name = c("abiotico", "queimada", "supressao", 
                                 "veg_natural", "agua"),
                        color = c("#1A1A1A", "#D60C00", "#FAE9A0",
                                  "#A6D96A", "#A1DDEF"))

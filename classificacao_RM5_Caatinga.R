@@ -413,6 +413,7 @@ map_class <- map_class %>%
     .x
   }))
 
+
 ## Visualizar mapa classificado
 
 ### Definir cores das classes
@@ -442,7 +443,10 @@ map_incerteza <- sits_uncertainty(
 
 ## Visualizar mapa de incerteza
 
-plot(map_incerteza, legend_position = "outside") 
+plot(map_incerteza, 
+     legend_position = "outside", 
+     palette = "Greys", 
+     rev = FALSE)
 
 # Classificação por tiles ---------------------------------------------------------------------
 

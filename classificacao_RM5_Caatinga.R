@@ -234,7 +234,7 @@ view(cubo)
 set.seed(03024)
 
 rf_model <- sits_train(
-  samples = all_samples, # Se precisar de amostras originais --> all_samples 
+  samples = all_samples, # Se precisar de amostras originais --> samples_clean
   ml_method = sits_rfor()) # Modelo Random Forest
 
 ## Gráfico com as variávies mais importantes do modelo

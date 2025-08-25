@@ -812,7 +812,7 @@ smooth_probs_rm5 <- smooth_probs_rm5 %>%
 plot(smooth_probs_rm5, labels = "supressao", palette = "YlOrBr")
 plot(smooth_probs_rm5, labels = "veg_natural", palette = "Greens")
 plot(smooth_probs_rm5, labels = "queimada", palette = "Reds")
-plot(smooth_probs_rm5, labels = "abiótico", palette = "Greys")
+plot(smooth_probs_rm5, labels = "abiotico", palette = "Greys")
 plot(smooth_probs_rm5, labels = "agua", palette = "Blues")
 
 # Rotulando o cubo de probabilidades - Classificação do mapa final ----------------------------------------------------------------------------------------

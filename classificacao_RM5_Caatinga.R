@@ -162,24 +162,24 @@ p1 + theme_bw() +
 summary(all_samples) # Número de amostras (mesma quantidade das originais ou balanceadas)
 
 # Remover amostras ruidosas -------------------------------------------------------------------------------------------------------------------------------
-
-samples_clean <- sits_som_clean_samples(som_cluster,
-                                        keep = c("clean", "analyze"))
-
-## Visualizar gráfico
-
-p2 <- plot(samples_clean)
-p2 + theme_bw() +
-  theme(axis.text = element_text(color = "black"),
-        axis.title = element_blank(),
-        legend.position = "bottom")
-
-summary(samples_clean) # Número de amostras após filtro
-
-# Ver diferenças na quantidade de amostras antes e após filtragem -----------------------------------------------------------------------------------------
-
-summary(all_samples)
-summary(samples_clean)
+# 
+# samples_clean <- sits_som_clean_samples(som_cluster,
+#                                          keep = c("clean", "analyze"))
+# 
+# ## Visualizar gráfico
+# 
+# p2 <- plot(samples_clean)
+# p2 + theme_bw() +
+#   theme(axis.text = element_text(color = "black"),
+#         axis.title = element_blank(),
+#         legend.position = "bottom")
+# 
+# summary(samples_clean) # Número de amostras após filtro
+# 
+# # Ver diferenças na quantidade de amostras antes e após filtragem -----------------------------------------------------------------------------------------
+# 
+# summary(all_samples)
+# summary(samples_clean)
 
 # Gerar SOM dos dados sem ruídos --------------------------------------------------------------------------------------------------------------------------
 
@@ -198,7 +198,7 @@ summary(samples_clean)
 # plot(som_cluster_limpo, band = "NDVI")
 # plot(som_cluster_limpo, band = "B11")
 
-# Avaliar matriz de confusão das amostras antes e após filtragem ------------------------------------------------------------------------------------------
+# Avaliar matriz de confusão das amostras sem filtragem ------------------------------------------------------------------------------------------
 
 ## Função de avaliação
 
@@ -215,6 +215,8 @@ p3 + theme(axis.text = element_text(color = "black"))
 ## Resultados das avaliações
 
 avaliacao_som 
+print(avaliacao_som, n = 23)
+
 # avaliacao_som_limpo
 
 # Classificações ------------------------------------------------------------------------------------------------------------------------------------------
@@ -358,6 +360,11 @@ mosaico_probs <- sits_mosaic(probs_class1,
 
 view(mosaico_probs)
 
+## Salvar dados do mosaico de probabilidades
+
+saveRDS(mosaico_probs, file = "mosaico_probs.rds")
+mosaico_probs <- readRDS("mosaico_probs.rds")
+
 ## Visualizar tiles juntos em único mapa
 
 plot(mosaico_probs, labels = "agua", palette = "Blues")
@@ -365,11 +372,6 @@ plot(mosaico_probs, labels = "aflor_rocha", palette = "Greys")
 plot(mosaico_probs, labels = "veg_natural", palette = "BuGn")
 plot(mosaico_probs, labels = "supressao", palette = "YlOrBr")
 plot(mosaico_probs, labels = "queimada", palette = "Reds")
-
-## Salvar dados do mosaico de probabilidades
-
-saveRDS(mosaico_probs, file = "mosaico_probs.rds")
-mosaico_probs <- readRDS("mosaico_probs.rds")
 
 # Suavização dos mapas de probabilidades ------------------------------------------------------------------------------------------------------------------
 

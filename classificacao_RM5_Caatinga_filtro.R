@@ -81,10 +81,6 @@ saveRDS(cubo_amostras, file = "cubo_amostras.rds")
 cubo_amostras <- readRDS("cubo_amostras.rds")
 view(cubo_amostras)
 
-cubo_amostras <- cubo_amostras |>
-  mutate(label = case_when(label == "aflor_rocha" ~ "abiotico",
-                           TRUE ~ label))
-
 # Visualizar padrões de séries temporais por classe -------------------------------------------------------------------------------------------------------
 
 padroes_tempo_amostras <- sits_patterns(cubo_amostras) # Média harmônica das séries temporais 

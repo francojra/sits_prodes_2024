@@ -103,8 +103,7 @@ p + theme_bw() +
 # 
 # ## Verificar proporção e nº de amostras balanceadas e não balanceadas
 # 
-# summary(cubo_amostras) # Nº de amostras não balanceadas
-# summary(cubo_amostras_bal) # Nº amostras balanceadas
+summary(cubo_amostras) # Nº de amostras não balanceadas
 
 # Análise SOM ---------------------------------------------------------------------------------------------------------------------------------------------
 

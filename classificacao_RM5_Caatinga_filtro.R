@@ -60,12 +60,12 @@ amostras_classes <- amostras_classes |>
 
 cubo_amostras <- sits_get_data(
   cubo, # Cubo geral com bandas e índices
-  samples = "amostras_RM_5_caatinga.shp", # Arquivo shapefile do tile 034018
+  samples = amostras_classes, # Arquivo shapefile do tile 034018
   label_attr = "label", # Coluna que indica as classes das amostras (pontos)
   bands = c("B01",   "B02",   "B03",   "B04",   "B05",   
             "B06",   "B07",   "B08",   "B09",   "B11",   
             "B12", "B8A", "EVI", "NBR", "NDVI"), # Seleção de bandas e índices
-  memsize = 70, # consumo de memória
+  memsize = 85, # consumo de memória
   multicores = 20, # Número de núcleos usados. Quanto maior, mais rápido o processamento
   progress = TRUE) # Acompanhar carregamento
 

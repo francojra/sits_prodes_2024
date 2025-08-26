@@ -483,7 +483,7 @@ crs(cubo[1, ]$crs) # CRS do primeiro tile
 
 # Ler máscara
 
-mask_sf <- read_sf("PRODES_2000_2023_+_RESIDUOS_RM5.shp")
+mask_sf <- read_sf("PRODES_MARCO_2000_2023_RM5_Dissolvido.shp")
 
 class(mask_sf)
 view(mask_sf)
@@ -537,7 +537,7 @@ mask_sf <- read_sf("mask_sf.shp")
 
 # Produzir mapas de probabilidades por classes ------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mapa_prob_rm5"
+tempdir_r <- "mapa_prob_rm5_fil"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 probs_class1 <- sits_classify(
@@ -545,7 +545,7 @@ probs_class1 <- sits_classify(
   ml_model = rf_model,
   exclusion_mask = mask_sf,
   multicores = 20,
-  memsize = 70,
+  memsize = 85,
   output_dir = tempdir_r)
 
 ## Salvar dados dos mapas de probabilidades

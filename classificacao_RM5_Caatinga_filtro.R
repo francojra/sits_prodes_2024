@@ -117,8 +117,8 @@ sits_colors_set(tibble(name = c("abiotico", "queimada", "supressao",
 
 som_cluster <- sits_som_map(
   data = cubo_amostras, # SOM feito com grupo de amostras balanceadas (VERIFICAR!)
-  grid_xdim = 12, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
-  grid_ydim = 12, # Grade eixo y
+  grid_xdim = 15, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
+  grid_ydim = 15, # Grade eixo y
   distance = "dtw", # Método de calcular a distância,
   mode = "pbatch", # Gera o mesmo mapa SOM a cada run
   rlen = 20) # Número de iterações (quantidade de vezes que o mapa é gerado)
@@ -188,8 +188,8 @@ summary(samples_clean)
 
 som_cluster_limpo <- sits_som_map(
   data = samples_clean, # SOM feito com o nosso grupo de amostras
-  grid_xdim = 10, # Aqui é 10 x 10 para gerar 100 neurônios
-  grid_ydim = 10,
+  grid_xdim = 15, # Aqui é 10 x 10 para gerar 100 neurônios
+  grid_ydim = 15,
   mode = "pbatch", # Gera o mesmo mapa SOM a cada run
   distance = "dtw", # Método para calcular a distância
   rlen = 20) # Número de iterações
@@ -211,12 +211,13 @@ avaliacao_som_limpo <- sits_som_evaluate_cluster(som_cluster_limpo)
 p3 <- plot(avaliacao_som) 
 p3 + theme(axis.text = element_text(color = "black"))
 
-plot(avaliacao_som_limpo)
+p3.1 <- plot(avaliacao_som_limpo)
+p3.1 + theme(axis.text = element_text(color = "black"))
 
 ## Resultados das avaliações
 
 avaliacao_som 
-print(avaliacao_som, n = 23)
+print(avaliacao_som, n = 25)
 
 # Script para Classificação do Bioma Caatinga --------------------------------------------------------------------------------------------------------------
 # Classificação por Região de Mapeamento (RM) --------------------------------------------------------------------------------------------------------------

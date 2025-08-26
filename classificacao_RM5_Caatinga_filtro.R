@@ -451,7 +451,7 @@ view(cubo)
 
 ## Treinar modelo com amostras limpas (VERIFICAR AMOSTRAS LIMPAS OU NÃO)
 
-set.seed(03024)
+set.seed(030289)
 
 rf_model <- sits_train(
   samples = samples_clean, # Se precisar de amostras originais --> all_samples 
@@ -463,7 +463,7 @@ plot(rf_model)
 
 # Validação do modelo Random Forest -----------------------------------------------------------------------------------------------------------------------
 
-set.seed(333)
+set.seed(333888)
 
 rfor_valid <- sits_kfold_validate(
   samples    = samples_clean,

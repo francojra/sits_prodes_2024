@@ -65,8 +65,8 @@ cubo_amostras <- sits_get_data(
   bands = c("B01",   "B02",   "B03",   "B04",   "B05",   
             "B06",   "B07",   "B08",   "B09",   "B11",   
             "B12", "B8A", "CLOUD"), # Seleção de bandas e índices
-  memsize = 75, # consumo de memória
-  multicores = 20, # Número de núcleos usados. Quanto maior, mais rápido o processamento
+  memsize = 85, # consumo de memória
+  multicores = 70, # Número de núcleos usados. Quanto maior, mais rápido o processamento
   progress = TRUE) # Acompanhar carregamento
 
 ## Verificar informações do cubo com amostras

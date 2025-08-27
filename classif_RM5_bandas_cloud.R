@@ -23,13 +23,13 @@ library(sf) # Pacote para manipulação de dados vetoriais (pontos, linhas, pol�
 
 # Criar e ler cubo de dados -------------------------------------------------------------------------------------------------------------------------------
 
-cubo <- sits_cube(
-  source     = "BDC", # Fonte dos cubos de dados
-  collection = "SENTINEL-2-16D", # Coleção de imagens
-  tiles      = c("033016", "033018", "034016", "034017",
-                 "034018", "035015", "035016", "035017"), # Tiles/Regiões de ineteresse
-  start_date = "2024-01-01", # Data inicial 
-  end_date   = "2024-12-31") # Data final 
+# cubo <- sits_cube(
+#   source     = "BDC", # Fonte dos cubos de dados
+#   collection = "SENTINEL-2-16D", # Coleção de imagens
+#   tiles      = c("033016", "033018", "034016", "034017",
+#                  "034018", "035015", "035016", "035017"), # Tiles/Regiões de ineteresse
+#   start_date = "2024-01-01", # Data inicial 
+#   end_date   = "2024-12-31") # Data final 
 
 ## Verificar bandas, tempos e outras informações do cubo 
 
@@ -40,21 +40,21 @@ view(cubo$file_info)
 
 ## Salvar e ler cubo criado
 
-saveRDS(cubo, file = "cubo.rds") 
+# saveRDS(cubo, file = "cubo.rds") 
 cubo <- readRDS("cubo.rds")
 
 # Ler arquivo .shp com amostras por classes ---------------------------------------------------------------------------------------------------------------
 
-amostras_classes <- sf::read_sf("novas_amostras_RM5.shp")
+amostras_classes <- sf::read_sf("Amostras_RM5_27_08_2025.shp")
 view(amostras_classes)
 unique(amostras_classes$label)
 
-amostras_classes <- amostras_classes |>
-  mutate(label = case_when(label == "aflor_rocha" ~ "abiotico",
-                           label == "aflor_rcoha" ~ "abiotico",
-                           label == "aflro_rocha" ~ "abiotico",
-                           TRUE ~ label)) |>
-  drop_na()
+# amostras_classes <- amostras_classes |>
+#   mutate(label = case_when(label == "aflor_rocha" ~ "abiotico",
+#                            label == "aflor_rcoha" ~ "abiotico",
+#                            label == "aflro_rocha" ~ "abiotico",
+#                            TRUE ~ label)) |>
+#   drop_na()
 
 # Adicionar amostras ao cubo de dados criado --------------------------------------------------------------------------------------------------------------
 

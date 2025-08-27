@@ -102,7 +102,8 @@ p + theme_bw() +
 #   n_samples_under = 100)
 # 
 # ## Verificar proporção e nº de amostras balanceadas e não balanceadas
-# 
+
+
 summary(cubo_amostras) # Nº de amostras não balanceadas
 
 # Análise SOM ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -231,10 +232,10 @@ view(cubo)
 
 ## Treinar modelo com amostras limpas (VERIFICAR AMOSTRAS LIMPAS OU NÃO)
 
-set.seed(030289)
+set.seed(843325)
 
 rf_model <- sits_train(
-  samples = samples_clean, # Se precisar de amostras originais --> all_samples 
+  samples = all_samples, # Se precisar de amostras originais --> samples_clean
   ml_method = sits_rfor()) # Modelo Random Forest
 
 ## Gráfico com as variávies mais importantes do modelo
@@ -243,10 +244,10 @@ plot(rf_model)
 
 # Validação do modelo Random Forest -----------------------------------------------------------------------------------------------------------------------
 
-set.seed(333888)
+set.seed(5268)
 
 rfor_valid <- sits_kfold_validate(
-  samples    = samples_clean,
+  samples    = all_samples,
   folds      = 5, 
   ml_method  = sits_rfor(),
   multicores = 5)
@@ -317,43 +318,43 @@ mask_sf <- read_sf("mask_sf.shp")
 
 # Produzir mapas de probabilidades por classes ------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mapa_prob_rm5_fil"
+tempdir_r <- "mapa_prob_rm5_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
-probs_class1 <- sits_classify(
+probs_class <- sits_classify(
   data = cubo, 
   ml_model = rf_model,
   exclusion_mask = mask_sf,
   multicores = 20,
-  memsize = 64,
+  memsize = 75,
   output_dir = tempdir_r)
 
 ## Salvar dados dos mapas de probabilidades
 
-saveRDS(probs_class1, file = "probs_class1.rds")
-probs_class1 <- readRDS("probs_class1.rds")
+saveRDS(probs_class, file = "probs_class.rds")
+probs_class <- readRDS("probs_class.rds")
 
-view(probs_class1)
-view(probs_class1[1, ]) # Visualizar dados do primeiro tile
-view(probs_class1[1:2, ]) # Visualizar dados do primeiro e segundo tile
+view(probs_class)
+view(probs_class[1, ]) # Visualizar dados do primeiro tile
+view(probs_class[1:2, ]) # Visualizar dados do primeiro e segundo tile
 
 ## Mapa
 
-plot(probs_class1[1, ])
-plot(probs_class1[2, ])
-plot(probs_class1[3, ])
-plot(probs_class1[4, ])
-plot(probs_class1[5, ])
-plot(probs_class1[6, ])
-plot(probs_class1[7, ])
-plot(probs_class1[8, ])
+plot(probs_class[1, ])
+plot(probs_class[2, ])
+plot(probs_class[3, ])
+plot(probs_class[4, ])
+plot(probs_class[5, ])
+plot(probs_class[6, ])
+plot(probs_class[7, ])
+plot(probs_class[8, ])
 
 # Unir tiles com sits_mosaic() ----------------------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mosaico_probs1"
+tempdir_r <- "mosaico_probs1_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
-mosaico_probs <- sits_mosaic(probs_class1,
+mosaico_probs <- sits_mosaic(probs_class,
                              output_dir = tempdir_r,
                              multicores = 20, 
                              progress   = TRUE)
@@ -376,16 +377,15 @@ plot(mosaico_probs, labels = "queimada", palette = "Reds")
 
 # Suavização dos mapas de probabilidades ------------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mosaico_prob_suav_rm5"
+tempdir_r <- "mosaico_prob_suav_rm5_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 smooth_probs_rm5 <- sits_smooth(
   cube = mosaico_probs,
   multicores = 20,
-  memsize = 70,
+  memsize = 75,
   output_dir = tempdir_r)
 
-plot(smooth_probs_rm5)
 plot(smooth_probs_rm5, labels = "supressao", palette = "YlOrBr")
 plot(smooth_probs_rm5, labels = "veg_natural", palette = "Greens")
 plot(smooth_probs_rm5, labels = "queimada", palette = "Reds")
@@ -397,21 +397,15 @@ plot(smooth_probs_rm5, labels = "agua", palette = "Blues")
 saveRDS(smooth_probs_rm5, file = "smooth_probs_rm5.rds")
 smooth_probs_rm5 <- readRDS("smooth_probs_rm5.rds")
 
-smooth_probs_rm5 <- smooth_probs_rm5 %>%
-  mutate(labels = map(labels, ~ {
-    .x[.x == "aflor_rocha"] <- "abiotico"
-    .x
-  }))
-
 # Rotulando o cubo de probabilidades - Classificação do mapa final ----------------------------------------------------------------------------------------
 
-tempdir_r <- "map_classificado"
+tempdir_r <- "map_classificado_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 map_class <- sits_label_classification(
   cube = smooth_probs_class, # mosaico_probs
   output_dir = tempdir_r, 
-  memsize = 64,
+  memsize = 75,
   multicores = 20)
 
 ## Salvar dados do cubo classificado
@@ -420,12 +414,6 @@ saveRDS(map_class, file = "map_class.rds")
 map_class <- readRDS("map_class.rds")
 view(map_class)
 class(map_class)
-
-map_class <- map_class %>%
-  mutate(labels = map(labels, ~ {
-    .x[.x == "aflor_rocha"] <- "abiotico"
-    .x
-  }))
 
 ## Visualizar mapa classificado
 

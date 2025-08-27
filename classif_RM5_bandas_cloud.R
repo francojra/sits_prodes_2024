@@ -431,14 +431,14 @@ plot(map_class,
 
 # Mapa de incerteza ---------------------------------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mapa_incerteza"
+tempdir_r <- "mapa_incerteza_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 map_incerteza <- sits_uncertainty(
   cube = mosaico_probs, # Arquivo do cubo de probabilidades com mosaico
   type = "margin",
   output_dir = tempdir_r,
-  memsize = 64,
+  memsize = 75,
   multicores = 20,
   progress = TRUE)
 

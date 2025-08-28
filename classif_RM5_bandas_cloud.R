@@ -66,7 +66,7 @@ cubo_amostras <- sits_get_data(
             "B06",   "B07",   "B08",   "B09",   "B11",   
             "B12", "B8A", "CLOUD"), # Seleção de bandas e índices
   memsize = 85, # consumo de memória
-  multicores = 70, # Número de núcleos usados. Quanto maior, mais rápido o processamento
+  multicores = 20, # Número de núcleos usados. Quanto maior, mais rápido o processamento
   progress = TRUE) # Acompanhar carregamento
 
 ## Verificar informações do cubo com amostras
@@ -96,13 +96,12 @@ p + theme_bw() +
 
 # Balanceamento de amostras -------------------------------------------------------------------------------------------------------------------------------
 
-# cubo_amostras_bal <- sits_reduce_imbalance(
-#   cubo_amostras,
-#   n_samples_over = 100,
-#   n_samples_under = 100)
-# 
-# ## Verificar proporção e nº de amostras balanceadas e não balanceadas
+cubo_amostras_bal <- sits_reduce_imbalance(
+  cubo_amostras,
+  n_samples_over = 100,
+  n_samples_under = 100)
 
+## Verificar proporção e nº de amostras balanceadas e não balanceadas
 
 summary(cubo_amostras) # Nº de amostras não balanceadas
 

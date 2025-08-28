@@ -115,7 +115,7 @@ sits_colors_set(tibble(name = c("abiotico", "queimada", "supressao",
 )
 
 som_cluster <- sits_som_map(
-  data = cubo_amostras_bal, # SOM feito com grupo de amostras balanceadas (VERIFICAR!)
+  data = cubo_amostras_bal, # SOM feito com grupo de amostras balanceadas 
   grid_xdim = 20, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
   grid_ydim = 20, # Grade eixo y
   distance = "dtw", # Método de calcular a distância,
@@ -139,19 +139,22 @@ plot(som_cluster, band = "B8A")
 
 # Seleção de neurônios no SOM -----------------------------------------------------------------------------------------------------------------------------
 
-amostras_filt_neuro <- som_cluster$data[som_cluster$data$id_neuron == 25, ]
-view(amostras_filt_neuro)
+view(som_cluster$data)
 
-amostras_filt_neuro1 <- som_cluster$data[som_cluster$data$id_neuron == 2, ]
-view(amostras_filt_neuro1)
+## Identificar amostras outliers de queimada
 
-amostras_filt_neuro2 <- som_cluster$data[som_cluster$data$id_neuron == 45, ]
+amostras_filt_neuro2 <- som_cluster$data[som_cluster$data$id_neuron == 204, ]
+view(amostras_filt_neuro2)
+
+amostras_filt_neuro2 <- som_cluster$data[som_cluster$data$id_neuron == 308, ]
 view(amostras_filt_neuro2)
 
 # Detectar ruídos das amostras ----------------------------------------------------------------------------------------------------------------------------
 
 all_samples <- sits_som_clean_samples(som_map = som_cluster,
                                       keep = c("clean", "analyze", "remove"))
+
+view(all_samples)
 
 ## Visualizar gráfico
 

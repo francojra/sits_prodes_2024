@@ -98,12 +98,13 @@ p + theme_bw() +
 
 cubo_amostras_bal <- sits_reduce_imbalance(
   cubo_amostras,
-  n_samples_over = 100,
-  n_samples_under = 100)
+  n_samples_over = 600,
+  n_samples_under = 1000)
 
 ## Verificar proporção e nº de amostras balanceadas e não balanceadas
 
 summary(cubo_amostras) # Nº de amostras não balanceadas
+summary(cubo_amostras_bal) # Nº de amostras não balanceadas
 
 # Análise SOM ---------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -116,9 +117,9 @@ sits_colors_set(tibble(name = c("abiotico", "queimada", "supressao",
 )
 
 som_cluster <- sits_som_map(
-  data = cubo_amostras, # SOM feito com grupo de amostras balanceadas (VERIFICAR!)
-  grid_xdim = 15, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
-  grid_ydim = 15, # Grade eixo y
+  data = cubo_amostras_bal, # SOM feito com grupo de amostras balanceadas (VERIFICAR!)
+  grid_xdim = 20, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
+  grid_ydim = 20, # Grade eixo y
   distance = "dtw", # Método de calcular a distância,
   mode = "pbatch", # Gera o mesmo mapa SOM a cada run
   rlen = 20) # Número de iterações (quantidade de vezes que o mapa é gerado)

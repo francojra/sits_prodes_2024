@@ -327,7 +327,7 @@ probs_class <- sits_classify(
   ml_model = rf_model,
   exclusion_mask = mask_sf,
   multicores = 20,
-  memsize = 75,
+  memsize = 85,
   output_dir = tempdir_r)
 
 ## Salvar dados dos mapas de probabilidades

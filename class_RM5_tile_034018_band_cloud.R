@@ -38,12 +38,12 @@ view(cubo$file_info)
 
 ## Salvar e ler cubo criado
 
-# saveRDS(cubo, file = "cubo.rds") 
+saveRDS(cubo, file = "cubo.rds") 
 cubo <- readRDS("cubo.rds")
 
 # Ler arquivo .shp com amostras por classes ---------------------------------------------------------------------------------------------------------------
 
-amostras_classes <- sf::read_sf("Amostras_RM5_27_08_2025.shp")
+amostras_classes <- sf::read_sf("Amostras_novas_tile034018.shp")
 view(amostras_classes)
 unique(amostras_classes$label)
 unique(is.na(amostras_classes))
@@ -102,8 +102,8 @@ sits_colors_set(tibble(name = c("abiotico", "queimada", "supressao",
 
 som_cluster <- sits_som_map(
   data = cubo_amostras, # SOM feito com grupo de amostras  
-  grid_xdim = 20, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
-  grid_ydim = 20, # Grade eixo y
+  grid_xdim = 15, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
+  grid_ydim = 15, # Grade eixo y
   distance = "dtw", # Método de calcular a distância,
   mode = "pbatch", # Gera o mesmo mapa SOM a cada run
   rlen = 20) # Número de iterações (quantidade de vezes que o mapa é gerado)
@@ -204,7 +204,7 @@ crs(cubo[1, ]$crs) # CRS do primeiro tile
 
 # Ler máscara
 
-mask_sf <- read_sf("PRODES_MARCO_2000_2023_RM5_Dissolvido.shp")
+mask_sf <- read_sf("034018.shp")
 
 class(mask_sf)
 view(mask_sf)
@@ -258,7 +258,7 @@ mask_sf <- read_sf("mask_sf.shp")
 
 # Produzir mapas de probabilidades por classes ------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mapa_prob_rm5_bandas_cloud"
+tempdir_r <- "mapa_prob_034018_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 probs_class <- sits_classify(

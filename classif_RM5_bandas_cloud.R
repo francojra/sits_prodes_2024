@@ -165,53 +165,53 @@ summary(all_samples) # Número de amostras (mesma quantidade das originais ou ba
 
 # Remover amostras ruidosas -------------------------------------------------------------------------------------------------------------------------------
 
-samples_clean <- sits_som_clean_samples(som_cluster,
-                                        keep = c("clean", "analyze"))
+# samples_clean <- sits_som_clean_samples(som_cluster,
+#                                         keep = c("clean", "analyze"))
 
 ## Visualizar gráfico
 
-p2 <- plot(samples_clean)
-p2 + theme_bw() +
-  theme(axis.text = element_text(color = "black"),
-        axis.title = element_blank(),
-        legend.position = "bottom")
-
-summary(samples_clean) # Número de amostras após filtro
+# p2 <- plot(samples_clean)
+# p2 + theme_bw() +
+#   theme(axis.text = element_text(color = "black"),
+#         axis.title = element_blank(),
+#         legend.position = "bottom")
+# 
+# summary(samples_clean) # Número de amostras após filtro
 
 # # Ver diferenças na quantidade de amostras antes e após filtragem -----------------------------------------------------------------------------------------
 
 summary(all_samples)
-summary(samples_clean)
+# summary(samples_clean)
 
 # Gerar SOM dos dados sem ruídos --------------------------------------------------------------------------------------------------------------------------
 
-som_cluster_limpo <- sits_som_map(
-  data = samples_clean, # SOM feito com o nosso grupo de amostras
-  grid_xdim = 15, # Aqui é 10 x 10 para gerar 100 neurônios
-  grid_ydim = 15,
-  mode = "pbatch", # Gera o mesmo mapa SOM a cada run
-  distance = "dtw", # Método para calcular a distância
-  rlen = 20) # Número de iterações
-
-## Visualizar mapa SOM limpo
-
-windows(width = 9, height = 7)
-plot(som_cluster_limpo, band = "NDVI")
+# som_cluster_limpo <- sits_som_map(
+#   data = samples_clean, # SOM feito com o nosso grupo de amostras
+#   grid_xdim = 15, # Aqui é 10 x 10 para gerar 100 neurônios
+#   grid_ydim = 15,
+#   mode = "pbatch", # Gera o mesmo mapa SOM a cada run
+#   distance = "dtw", # Método para calcular a distância
+#   rlen = 20) # Número de iterações
+# 
+# ## Visualizar mapa SOM limpo
+# 
+# windows(width = 9, height = 7)
+# plot(som_cluster_limpo, band = "NDVI")
 
 # Avaliar matriz de confusão das amostras sem filtragem ------------------------------------------------------------------------------------------
 
 ## Função de avaliação
 
 avaliacao_som <- sits_som_evaluate_cluster(som_cluster)
-avaliacao_som_limpo <- sits_som_evaluate_cluster(som_cluster_limpo)
+# avaliacao_som_limpo <- sits_som_evaluate_cluster(som_cluster_limpo)
 
 ## Gráficos
 
 p3 <- plot(avaliacao_som) 
 p3 + theme(axis.text = element_text(color = "black"))
 
-p3.1 <- plot(avaliacao_som_limpo)
-p3.1 + theme(axis.text = element_text(color = "black"))
+# p3.1 <- plot(avaliacao_som_limpo)
+# p3.1 + theme(axis.text = element_text(color = "black"))
 
 ## Resultados das avaliações
 

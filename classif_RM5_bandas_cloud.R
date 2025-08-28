@@ -48,13 +48,11 @@ cubo <- readRDS("cubo.rds")
 amostras_classes <- sf::read_sf("Amostras_RM5_27_08_2025.shp")
 view(amostras_classes)
 unique(amostras_classes$label)
+unique(is.na(amostras_classes))
 
-# amostras_classes <- amostras_classes |>
-#   mutate(label = case_when(label == "aflor_rocha" ~ "abiotico",
-#                            label == "aflor_rcoha" ~ "abiotico",
-#                            label == "aflro_rocha" ~ "abiotico",
-#                            TRUE ~ label)) |>
-#   drop_na()
+amostras_classes <- amostras_classes |>
+  mutate(label = case_when(label == "aflor_rocha" ~ "abiotico",
+                           TRUE ~ label)) 
 
 # Adicionar amostras ao cubo de dados criado --------------------------------------------------------------------------------------------------------------
 
@@ -90,8 +88,8 @@ view(padroes_tempo_amostras)
 ## Gráfico
 
 p <- plot(padroes_tempo_amostras)
-p + theme_bw() +
-  theme(legend.position = "right",
+p + theme_gray() +
+  theme(legend.position = "top",
         axis.text = element_text(color = "black"))
 
 # Balanceamento de amostras -------------------------------------------------------------------------------------------------------------------------------
@@ -99,7 +97,7 @@ p + theme_bw() +
 cubo_amostras_bal <- sits_reduce_imbalance(
   cubo_amostras,
   n_samples_over = 600,
-  n_samples_under = 1000)
+  n_samples_under = 1200)
 
 ## Verificar proporção e nº de amostras balanceadas e não balanceadas
 

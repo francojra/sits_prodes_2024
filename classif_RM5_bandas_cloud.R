@@ -73,14 +73,14 @@ cubo_amostras <- sits_get_data(
 ## Verificar informações do cubo com amostras
 
 view(cubo_amostras)
-sits_bands(cubo_amostras)
-sits_labels(cubo_amostras)
 
 ## Salvar e ler cubo com amostras
 
 saveRDS(cubo_amostras, file = "cubo_amostras.rds") 
 cubo_amostras <- readRDS("cubo_amostras.rds")
 view(cubo_amostras)
+sits_bands(cubo_amostras)
+sits_labels(cubo_amostras)
 
 # Visualizar padrões de séries temporais por classe -------------------------------------------------------------------------------------------------------
 

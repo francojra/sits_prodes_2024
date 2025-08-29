@@ -57,7 +57,7 @@ amostras_classes <- amostras_classes |>
 # Adicionar amostras ao cubo de dados criado --------------------------------------------------------------------------------------------------------------
 
 cubo_amostras <- sits_get_data(
-  cubo, # Cubo geral com bandas e índices
+  cubo, 
   samples = amostras_classes, # Arquivo shapefile do tile 034018
   label_attr = "label", # Coluna que indica as classes das amostras (pontos)
   bands = c("B01",   "B02",   "B03",   "B04",   "B05",   
@@ -88,21 +88,13 @@ view(padroes_tempo_amostras)
 ## Gráfico
 
 p <- plot(padroes_tempo_amostras)
-p + theme_gray() +
+p + theme_bw() +
   theme(legend.position = "top",
         axis.text = element_text(color = "black"))
-
-# Balanceamento de amostras -------------------------------------------------------------------------------------------------------------------------------
-
-cubo_amostras_bal <- sits_reduce_imbalance(
-  cubo_amostras,
-  n_samples_over = 600,
-  n_samples_under = 1200)
 
 ## Verificar proporção e nº de amostras balanceadas e não balanceadas
 
 summary(cubo_amostras) # Nº de amostras não balanceadas
-summary(cubo_amostras_bal) # Nº de amostras não balanceadas
 
 # Análise SOM ---------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -115,7 +107,7 @@ sits_colors_set(tibble(name = c("abiotico", "queimada", "supressao",
 )
 
 som_cluster <- sits_som_map(
-  data = cubo_amostras_bal, # SOM feito com grupo de amostras balanceadas 
+  data = cubo_amostras, # SOM feito com grupo de amostras 
   grid_xdim = 20, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
   grid_ydim = 20, # Grade eixo y
   distance = "dtw", # Método de calcular a distância,
@@ -326,7 +318,7 @@ probs_class <- sits_classify(
   data = cubo, 
   ml_model = rf_model,
   exclusion_mask = mask_sf,
-  multicores = 20,
+  multicores = 30,
   memsize = 85,
   output_dir = tempdir_r)
 

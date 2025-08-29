@@ -305,7 +305,7 @@ tempdir_r <- "map_classificado_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 map_class <- sits_label_classification(
-  cube = smooth_probs_class, # mosaico_probs
+  cube = smooth_probs_rm5, # mosaico_probs
   output_dir = tempdir_r, 
   memsize = 85,
   multicores = 30)
@@ -347,7 +347,8 @@ map_incerteza <- sits_uncertainty(
 ## Visualizar mapa de incerteza
 
 plot(map_incerteza, 
-     legend_position = "outside") # rev = FALSE
+     legend_position = "outside",
+     palette = "Reds", rev = FALSE) # rev = FALSE
 
 # Adicionar máscara ao mapa de incerteza ------------------------------------------------------------------------------------------------------------------
 

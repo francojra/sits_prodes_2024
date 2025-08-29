@@ -307,8 +307,8 @@ dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 map_class <- sits_label_classification(
   cube = smooth_probs_class, # mosaico_probs
   output_dir = tempdir_r, 
-  memsize = 75,
-  multicores = 20)
+  memsize = 85,
+  multicores = 30)
 
 ## Salvar dados do cubo classificado
 

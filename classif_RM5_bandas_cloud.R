@@ -158,41 +158,6 @@ p1 + theme_bw() +
 
 summary(all_samples) # Número de amostras (mesma quantidade das originais ou balanceadas)
 
-# Remover amostras ruidosas -------------------------------------------------------------------------------------------------------------------------------
-
-# samples_clean <- sits_som_clean_samples(som_cluster,
-#                                         keep = c("clean", "analyze"))
-
-## Visualizar gráfico
-
-# p2 <- plot(samples_clean)
-# p2 + theme_bw() +
-#   theme(axis.text = element_text(color = "black"),
-#         axis.title = element_blank(),
-#         legend.position = "bottom")
-# 
-# summary(samples_clean) # Número de amostras após filtro
-
-# # Ver diferenças na quantidade de amostras antes e após filtragem -----------------------------------------------------------------------------------------
-
-summary(all_samples)
-# summary(samples_clean)
-
-# Gerar SOM dos dados sem ruídos --------------------------------------------------------------------------------------------------------------------------
-
-# som_cluster_limpo <- sits_som_map(
-#   data = samples_clean, # SOM feito com o nosso grupo de amostras
-#   grid_xdim = 15, # Aqui é 10 x 10 para gerar 100 neurônios
-#   grid_ydim = 15,
-#   mode = "pbatch", # Gera o mesmo mapa SOM a cada run
-#   distance = "dtw", # Método para calcular a distância
-#   rlen = 20) # Número de iterações
-# 
-# ## Visualizar mapa SOM limpo
-# 
-# windows(width = 9, height = 7)
-# plot(som_cluster_limpo, band = "NDVI")
-
 # Avaliar matriz de confusão das amostras sem filtragem ------------------------------------------------------------------------------------------
 
 ## Função de avaliação
@@ -211,7 +176,7 @@ p3 + theme(axis.text = element_text(color = "black"))
 ## Resultados das avaliações
 
 avaliacao_som 
-print(avaliacao_som, n = 25)
+print(avaliacao_som, n = 23)
 
 # Classificações ------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -225,7 +190,7 @@ view(cubo)
 
 ## Treinar modelo com amostras limpas (VERIFICAR AMOSTRAS LIMPAS OU NÃO)
 
-set.seed(843325)
+set.seed(5207418)
 
 rf_model <- sits_train(
   samples = all_samples, # Se precisar de amostras originais --> samples_clean
@@ -237,7 +202,7 @@ plot(rf_model)
 
 # Validação do modelo Random Forest -----------------------------------------------------------------------------------------------------------------------
 
-set.seed(5268)
+set.seed(520)
 
 rfor_valid <- sits_kfold_validate(
   samples    = all_samples,
@@ -280,6 +245,8 @@ plot(mask_sf)
 sf::st_write(mask_sf, "mask_sf.shp")
 
 mask_sf <- read_sf("mask_sf.shp")
+
+plot(mask_sf)
 
 # # Fazer o dissolve da máscara
 # 

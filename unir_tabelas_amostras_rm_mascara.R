@@ -59,7 +59,7 @@ mask_sf_034018 <- read_sf("mask_sf_034018.shp")
 
 library(ggplot2)
 
-ggplot(mask_sf_034018) +
+ggplot(mascara) +
   geom_sf(fill = "lightblue", color = "darkblue") +
   theme_minimal()
 

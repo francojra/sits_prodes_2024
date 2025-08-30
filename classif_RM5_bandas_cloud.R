@@ -157,7 +157,7 @@ p1 <- plot(all_samples)
 p1 + theme_bw() +
   theme(axis.text = element_text(color = "black"),
         axis.title = element_blank(),
-        legend.position = "bottom")
+        legend.position = "top")
 
 summary(all_samples) # Número de amostras (mesma quantidade das originais ou balanceadas)
 
@@ -345,6 +345,7 @@ dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 smooth_probs_rm5 <- sits_smooth(
   cube = mosaico_probs,
+  exclusion_mask = mask_sf,
   multicores = 20,
   memsize = 75,
   output_dir = tempdir_r)

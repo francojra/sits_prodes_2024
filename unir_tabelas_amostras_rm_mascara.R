@@ -42,8 +42,13 @@ view(mascara_tiles)
 
 # Teste da máscara por tile
 
-mascara_tile_034018 <- mascara_tile_034018[5,]
-
-plot(st_geometry(mascara_tile_034018))
+mascara_tile_034018 <- mascara_tiles[5, 3]
 
 view(mascara_tile_034018)
+
+st_geometry(mascara_tile_034018)
+
+plot(st_geometry(mascara_tile_034018), col = "lightblue", border = "darkblue")
+
+
+

@@ -41,7 +41,10 @@ st_geometry_type(mascara_multipolygon)
 view(poligonos_multipolygon)
 view(mascara_multipolygon)
 
-mascara_tiles <- rbind(mascara, poligonos)
+poligonos_multipolygon <- poligonos_multipolygon |>
+  rename(geometry1 = geometry)
+
+mascara_tiles <- st_join(mascara, poligonos)
 
 st_geometry_type(mascara_tiles)
 

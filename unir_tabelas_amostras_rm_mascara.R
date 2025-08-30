@@ -16,30 +16,34 @@ st_crs(mascara)
 
 pontos_com_regiao <- st_join(pontos, poligonos)
 
+# Verificar se existe NA nas colunas mais importantes
+
+view(pontos_com_regiao)
+unique(is.na(pontos_com_regiao$longitude))
+unique(is.na(pontos_com_regiao$latitude))
+unique(is.na(pontos_com_regiao$label))
+
+# unir tabela com tile e geometria da máscara
+
 sf_use_s2(FALSE)
 
-pontos_final <- st_join(pontos_com_regiao, mascara)
+mascara_tiles <- st_join(poligonos, mascara)
 
 # visualizar
 
-head(pontos_final)
-view(pontos_final)
+view(mascara_tiles)
 
 # Resumir tabela
 
-pontos_final <- pontos_final |>
-  dplyr::select(-c(8:24))
+mascara_tiles <- mascara_tiles |>
+  dplyr::select(-c(3:19))
 
-# Verificar se existe NA nas colunas mais importantes
-
-view(pontos_final)
-unique(is.na(pontos_final$longitude))
-unique(is.na(pontos_final$latitude))
-unique(is.na(pontos_final$label))
+view(mascara_tiles)
 
 # Teste da máscara por tile
 
-mascara_tile_034018 <- pontos_final |>
-  filter(tile == "034018")
+mascara_tile_034018 <- mascara_tile_034018[5,]
+
+plot(st_geometry(mascara_tile_034018))
 
 view(mascara_tile_034018)

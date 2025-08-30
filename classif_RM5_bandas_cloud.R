@@ -288,7 +288,7 @@ probs_class <- sits_classify(
   data = cubo, 
   ml_model = rf_model,
   exclusion_mask = mask_sf,
-  multicores = 30,
+  multicores = 20,
   memsize = 85,
   output_dir = tempdir_r)
 
@@ -312,39 +312,13 @@ plot(probs_class[6, ])
 plot(probs_class[7, ])
 plot(probs_class[8, ])
 
-# Unir tiles com sits_mosaic() ----------------------------------------------------------------------------------------------------------------------------
-
-tempdir_r <- "mosaico_probs1_bandas_cloud"
-dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
-
-mosaico_probs <- sits_mosaic(probs_class,
-                             output_dir = tempdir_r,
-                             multicores = 20, 
-                             progress   = TRUE)
-
-view(mosaico_probs)
-
-## Salvar dados do mosaico de probabilidades
-
-saveRDS(mosaico_probs, file = "mosaico_probs.rds")
-mosaico_probs <- readRDS("mosaico_probs.rds")
-view(mosaico_probs)
-
-## Visualizar tiles juntos em único mapa
-
-plot(mosaico_probs, labels = "agua", palette = "Blues")
-plot(mosaico_probs, labels = "aflor_rocha", palette = "Greys")
-plot(mosaico_probs, labels = "veg_natural", palette = "BuGn")
-plot(mosaico_probs, labels = "supressao", palette = "YlOrBr")
-plot(mosaico_probs, labels = "queimada", palette = "Reds")
-
 # Suavização dos mapas de probabilidades ------------------------------------------------------------------------------------------------------------------
 
 tempdir_r <- "mosaico_prob_suav_rm5_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 smooth_probs_rm5 <- sits_smooth(
-  cube = mosaico_probs,
+  cube = probs_class,
   exclusion_mask = mask_sf,
   multicores = 20,
   memsize = 75,
@@ -392,6 +366,25 @@ sits_colors_set(tibble(name = c("abiotico", "queimada", "supressao",
 plot(map_class,
      legend_position = "outside",
      scale = 1.0)
+
+# Unir tiles com sits_mosaic() ----------------------------------------------------------------------------------------------------------------------------
+
+tempdir_r <- "mosaico_probs1_bandas_cloud"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+mosaico_probs <- sits_mosaic(map_class,
+                             output_dir = tempdir_r,
+                             multicores = 20, 
+                             progress   = TRUE)
+
+view(mosaico_probs)
+
+## Salvar dados do mosaico de probabilidades
+
+saveRDS(mosaico_probs, file = "mosaico_probs.rds")
+mosaico_probs <- readRDS("mosaico_probs.rds")
+view(mosaico_probs)
+plot(mosaico_probs)
 
 # Mapa de incerteza ---------------------------------------------------------------------------------------------------------------------------------------
 

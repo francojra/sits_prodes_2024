@@ -30,7 +30,20 @@ sf_use_s2(FALSE)
 st_geometry_type(mascara)
 st_geometry_type(poligonos)
 
-mascara_tiles <- st_join(poligonos, mascara)
+# transformar a camada de polígonos em multipolígonos
+
+poligonos_multipolygon <- st_cast(poligonos, "MULTIPOLYGON")
+mascara_multipolygon <- st_cast(mascara, "MULTIPOLYGON")
+
+st_geometry_type(poligonos_multipolygon)
+st_geometry_type(mascara_multipolygon)
+
+view(poligonos_multipolygon)
+view(mascara_multipolygon)
+
+mascara_tiles <- rbind(mascara, poligonos)
+
+st_geometry_type(mascara_tiles)
 
 # visualizar
 

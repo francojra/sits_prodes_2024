@@ -27,18 +27,25 @@ unique(is.na(pontos_com_regiao$label))
 
 sf_use_s2(FALSE)
 
+st_geometry_type(mascara)
+st_geometry_type(poligonos)
+
 mascara_tiles <- st_join(poligonos, mascara)
 
 # visualizar
 
 view(mascara_tiles)
 
+ggplot(mascara_tiles) +
+  geom_sf(fill = "darkblue", color = "darkblue") +
+  theme_minimal()
+
 # Resumir tabela
 
-mascara_tiles <- mascara_tiles |>
-  dplyr::select(-c(3:19))
-
-view(mascara_tiles)
+# mascara_tiles <- mascara_tiles |>
+#   dplyr::select(-c(3:19))
+# 
+# view(mascara_tiles)
 
 # Teste da máscara por tile
 

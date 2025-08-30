@@ -46,9 +46,21 @@ mascara_tile_034018 <- mascara_tiles[5, 3]
 
 view(mascara_tile_034018)
 
-st_geometry(mascara_tile_034018)
+# Verificar validade da máscara
 
-plot(st_geometry(mascara_tile_034018), col = "lightblue", border = "darkblue")
+mask_sf_034018 <- sf::st_make_valid(mascara_tile_034018) # Validade da topologia
+sf::st_geometry_type(mask_sf_034018) # Verificar tipo de geometria, deve ser multipoligon ou poligon
 
+# Salvar shp
+
+sf::st_write(mask_sf_034018, "mask_sf_034018.shp")
+
+mask_sf_034018 <- read_sf("mask_sf_034018.shp")
+
+library(ggplot2)
+
+ggplot(mask_sf_034018) +
+  geom_sf(fill = "lightblue", color = "darkblue") +
+  theme_minimal()
 
 

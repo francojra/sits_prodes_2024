@@ -46,12 +46,12 @@ poligonos_multipolygon <- poligonos_multipolygon |>
 
 mascara_tiles <- st_join(mascara, poligonos)
 
+mascara_tiles_034018 <- mascara_tiles |>
+  
+
 st_geometry_type(mascara_tiles)
 
 # visualizar
-
-view(mascara_tiles)
-names(mascara_tiles)
 
 ggplot(mascara_tiles) +
   geom_sf(fill = "darkblue", color = "darkblue") +

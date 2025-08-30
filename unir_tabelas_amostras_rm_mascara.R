@@ -42,7 +42,7 @@ view(poligonos_multipolygon)
 view(mascara_multipolygon)
 
 poligonos_multipolygon <- poligonos_multipolygon |>
-  rename(geometry1 = geometry)
+  rename(geometry1 = geometry) # dplyr::select(-geometry)
 
 mascara_tiles <- st_join(mascara, poligonos)
 
@@ -51,6 +51,7 @@ st_geometry_type(mascara_tiles)
 # visualizar
 
 view(mascara_tiles)
+names(mascara_tiles)
 
 ggplot(mascara_tiles) +
   geom_sf(fill = "darkblue", color = "darkblue") +

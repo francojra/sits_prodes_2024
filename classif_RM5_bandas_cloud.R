@@ -321,7 +321,7 @@ smooth_probs_rm5 <- sits_smooth(
   cube = probs_class,
   exclusion_mask = mask_sf,
   multicores = 20,
-  memsize = 75,
+  memsize = 85,
   output_dir = tempdir_r)
 
 plot(smooth_probs_rm5, labels = "supressao", palette = "YlOrBr")
@@ -341,9 +341,9 @@ tempdir_r <- "map_classificado_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 map_class <- sits_label_classification(
-  cube = smooth_probs_class, # mosaico_probs
+  cube = smooth_probs_rm5, # mosaico_probs
   output_dir = tempdir_r, 
-  memsize = 75,
+  memsize = 85,
   multicores = 20)
 
 ## Salvar dados do cubo classificado
@@ -369,7 +369,7 @@ plot(map_class,
 
 # Unir tiles com sits_mosaic() ----------------------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mosaico_probs1_bandas_cloud"
+tempdir_r <- "mosaico_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 mosaico_probs <- sits_mosaic(map_class,

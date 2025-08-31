@@ -330,7 +330,7 @@ plot(smooth_probs_rm5, labels = "queimada", palette = "Reds")
 plot(smooth_probs_rm5, labels = "aflor_rocha", palette = "Greys")
 plot(smooth_probs_rm5, labels = "agua", palette = "Blues")
 
-plot(smooth_probs_rm5[7,])
+plot(smooth_probs_rm5[6,])
 
 ## Salvar dados do cubo suavizado
 

@@ -314,7 +314,7 @@ plot(probs_class[8, ])
 
 # Suavização dos mapas de probabilidades ------------------------------------------------------------------------------------------------------------------
 
-tempdir_r <- "mosaico_prob_suav_rm5_bandas_cloud"
+tempdir_r <- "prob_suav_rm5_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 smooth_probs_rm5 <- sits_smooth(
@@ -329,6 +329,8 @@ plot(smooth_probs_rm5, labels = "veg_natural", palette = "Greens")
 plot(smooth_probs_rm5, labels = "queimada", palette = "Reds")
 plot(smooth_probs_rm5, labels = "aflor_rocha", palette = "Greys")
 plot(smooth_probs_rm5, labels = "agua", palette = "Blues")
+
+plot(smooth_probs_rm5[7,])
 
 ## Salvar dados do cubo suavizado
 
@@ -363,7 +365,7 @@ sits_colors_set(tibble(name = c("abiotico", "queimada", "supressao",
                                  "#A6D96A", "#A1DDEF"))
 )
 
-plot(map_class,
+plot(map_class[8,],
      legend_position = "outside",
      scale = 1.0)
 

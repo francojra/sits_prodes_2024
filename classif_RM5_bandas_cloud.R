@@ -339,6 +339,7 @@ plot(smooth_probs_rm5[8,])
 
 saveRDS(smooth_probs_rm5, file = "smooth_probs_rm5.rds")
 smooth_probs_rm5 <- readRDS("smooth_probs_rm5.rds")
+view(smooth_probs_rm5)
 
 # Rotulando o cubo de probabilidades - Classificação do mapa final ----------------------------------------------------------------------------------------
 
@@ -346,7 +347,7 @@ tempdir_r <- "map_classificado_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 map_class <- sits_label_classification(
-  cube = smooth_probs_rm5, # mosaico_probs
+  cube = smooth_probs_rm5, 
   output_dir = tempdir_r, 
   memsize = 85,
   multicores = 20)
@@ -389,18 +390,35 @@ view(mosaico_probs)
 saveRDS(mosaico_probs, file = "mosaico_probs.rds")
 mosaico_probs <- readRDS("mosaico_probs.rds")
 view(mosaico_probs)
-plot(mosaico_probs)
+
+## Visualizar mapa completo
+
+plot(mosaico_probs, 
+     legend_position = "outside",
+     scale = 1.0)
 
 # Mapa de incerteza ---------------------------------------------------------------------------------------------------------------------------------------
+
+## Primeiro é necessário criar o mosaico com dados de probabilidade
+
+tempdir_r <- "mosaico_bandas_cloud_mi"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+mosaico_probs_mi <- sits_mosaic(smooth_probs_rm5,
+                                output_dir = tempdir_r,
+                                multicores = 20, 
+                                progress   = TRUE)
+
+view(mosaico_probs_mi)
 
 tempdir_r <- "mapa_incerteza_bandas_cloud"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 map_incerteza <- sits_uncertainty(
-  cube = mosaico_probs, # Arquivo do cubo de probabilidades com mosaico
+  cube = mosaico_probs_mi, # Arquivo do cubo de probabilidades com mosaico
   type = "margin",
   output_dir = tempdir_r,
-  memsize = 75,
+  memsize = 85,
   multicores = 20,
   progress = TRUE)
 

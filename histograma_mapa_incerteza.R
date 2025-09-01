@@ -1,23 +1,22 @@
-library(terra)
-library(ggplot2)
 
-# Carregar o raster
+# Histograma do mapa de incerteza -------------------------------------------------------------------------------------------------------------------------
+# Classificação RM 5 --------------------------------------------------------------------------------------------------------------------------------------
+# Classificação com banda de nuvem, sem filtro e sem balanceamento ----------------------------------------------------------------------------------------
 
-incerteza <- rast("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_margin_v1.tif")
+# Carregar pacotes -----------------------------------------------------------------------------------------------------------------------------------------
 
-values(incerteza)
+library(tidyverse)
+library(janitor)
+library(readxl)
 
-# Normalizar (0 a 1)
+# Carregar tabela com valores de incerteza ----------------------------------------------------------------------------------------------------------------
 
-incerteza_norm <- incerteza / 10000
+v_inc <- readxl::read_excel("valores_incerteza.xlsx")
 
-# Extrair valores em um dataframe
+view(v_inc)
 
-df <- data.frame(valor = values(incerteza_norm))
-
-# Remover NA
-
-df <- na.omit(df)
+v_inc <- v_inc |>
+  janitor::clean_names()
 
 # Plotar histograma com ggplot2
 

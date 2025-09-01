@@ -472,4 +472,32 @@ ggplot() +
 
 # Histograma do mapa de incerteza -------------------------------------------------------------
 
+incerteza <- unique(values(mapa_incert_final))
+
+# Normalizar (0 a 1)
+
+incerteza_norm <- incerteza / 10000
+
+# Extrair valores para dataframe
+
+df <- as.data.frame(incerteza_norm, na.rm = TRUE)
+
+view(df)
+
+# Renomear a coluna (vem como layer name)
+
+names(df) <- "valor"
+
+# Verificar presença de NA na tabela
+
+unique(is.na(df))
+
+# Plotar histograma com ggplot2
+
+ggplot(df, aes(x = valor)) +
+  geom_histogram(fill = "steelblue", color = "white") +
+  labs(title = "Histograma da Incerteza",
+       x = "Incerteza (0–1)",
+       y = "Frequência") +
+  theme_minimal()
 

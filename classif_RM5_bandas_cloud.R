@@ -442,7 +442,7 @@ unique(is.na(values(mapa_incert_final))) # Mapa não tem valor NA
 
 # Definir maior valor de incerteza que é na área externa do mapa como NA
 
-mapa_incert_final[mapa_incert_final == 10000] <- NA
+#mapa_incert_final[mapa_incert_final == 10000] <- NA
 
 library(tidyterra) # Pacote para inserir raster no ggplot2
 library(RColorBrewer)
@@ -450,24 +450,26 @@ library(RColorBrewer)
 # Mapa ggplot2 da máscara
 
 ggplot(mask_sf) +
-  geom_sf(fill = "black", color = "black") 
+  geom_sf(fill = "darkblue", color = "darkblue") 
 
 # Mapa da máscara com mapa de incerteza
 
 ggplot() +
-  geom_spatraster(data = mapa_incert_final) +
-  scale_fill_gradient(na.value = "white", 
-                      low  = "#7fbc41",  # cor mais clara
-                      high = "red"   # cor mais escura
+  geom_spatraster(data = mapa_incert_final) + 
+  scale_fill_gradient(low  = "#31a354",  # cor mais clara
+                      high = "#67001f"   # cor mais escura
   ) +
-  geom_sf(data = mask_sf, fill = "black", color = "black") +
-  theme_bw() +
-  labs(title = "Mapa de Incerteza")
+  geom_sf(data = mask_sf, fill = "white", color = "white") +
+  theme_bw() 
 
-# Exemplo da documentação do pacote
+# Exemplo da documentação do pacote 
 
 # ggplot(cyl_sf) +
 # geom_spatraster_rgb(data = tile) +
 # geom_sf(aes(fill = iso2)) +
 # coord_sf(crs = 3857) +
 # scale_fill_viridis_d(alpha = 0.7)
+
+# Histograma do mapa de incerteza -------------------------------------------------------------
+
+

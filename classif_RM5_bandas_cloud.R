@@ -429,6 +429,8 @@ plot(map_incerteza,
 
 # Adicionar máscara ao mapa de incerteza ------------------------------------------------------------------------------------------------------------------
 
+### OBSERVAÇÃO: a adição da máscara no QGIS é mais fácil e mantém a qualidade.
+
 ## Ler raster do mapa de incerteza e mapa da mascara
 
 mask_sf

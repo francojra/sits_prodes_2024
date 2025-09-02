@@ -531,13 +531,13 @@ unc_masked8 <- mask(mapa_inc8, mask_tile8, inverse = TRUE)
 
 writeRaster(unc_masked, "map_masked.tif", overwrite = TRUE)
 writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
-writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
-writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
-writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
-writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
-writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
-writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
-writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
+writeRaster(unc_masked2, "map_masked2.tif", overwrite = TRUE)
+writeRaster(unc_masked3, "map_masked3.tif", overwrite = TRUE)
+writeRaster(unc_masked4, "map_masked4.tif", overwrite = TRUE)
+writeRaster(unc_masked5, "map_masked5.tif", overwrite = TRUE)
+writeRaster(unc_masked6, "map_masked6.tif", overwrite = TRUE)
+writeRaster(unc_masked7, "map_masked7.tif", overwrite = TRUE)
+writeRaster(unc_masked8, "map_masked8.tif", overwrite = TRUE)
 
 # Histogramas do mapa de incerteza -------------------------------------------------------------
 

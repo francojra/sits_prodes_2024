@@ -427,6 +427,19 @@ map_incerteza <- sits_uncertainty(
 plot(map_incerteza, 
      legend_position = "outside") # rev = FALSE
 
+# Mapa de incerteza por tile ------------------------------------------------------------------
+
+tempdir_r <- "mapa_incerteza_bandas_cloud_tiles"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+map_incerteza <- sits_uncertainty(
+  cube = smooth_probs_rm5, # Arquivo do cubo de probabilidades com mosaico
+  type = "margin",
+  output_dir = tempdir_r,
+  memsize = 85,
+  multicores = 20,
+  progress = TRUE)
+
 # Adicionar máscara ao mapa de incerteza ------------------------------------------------------------------------------------------------------------------
 
 ### OBSERVAÇÃO: a adição da máscara no QGIS é mais fácil e mantém a qualidade.
@@ -440,27 +453,45 @@ class(mapa_incert_final)
 unique(values(mapa_incert_final))
 unique(is.na(values(mapa_incert_final))) # Mapa não tem valor NA
 
+
+
+
+
+
+
+
+
+
+
+
+# Histogramas do mapa de incerteza -------------------------------------------------------------
+
+
+
+
+
+
 # Definir maior valor de incerteza que é na área externa do mapa como NA
 
 #mapa_incert_final[mapa_incert_final == 10000] <- NA
-
-library(tidyterra) # Pacote para inserir raster no ggplot2
-library(RColorBrewer)
-
-# Mapa ggplot2 da máscara
-
-ggplot(mask_sf) +
-  geom_sf(fill = "darkblue", color = "darkblue") 
-
-# Mapa da máscara com mapa de incerteza
-
-ggplot() +
-  geom_spatraster(data = mapa_incert_final) + 
-  scale_fill_gradient(low  = "#31a354",  # cor mais clara
-                      high = "#67001f"   # cor mais escura
-  ) +
-  geom_sf(data = mask_sf, fill = "white", color = "white") +
-  theme_bw() 
+# 
+# library(tidyterra) # Pacote para inserir raster no ggplot2
+# library(RColorBrewer)
+# 
+# # Mapa ggplot2 da máscara
+# 
+# ggplot(mask_sf) +
+#   geom_sf(fill = "darkblue", color = "darkblue") 
+# 
+# # Mapa da máscara com mapa de incerteza
+# 
+# ggplot() +
+#   geom_spatraster(data = mapa_incert_final) + 
+#   scale_fill_gradient(low  = "#31a354",  # cor mais clara
+#                       high = "#67001f"   # cor mais escura
+#   ) +
+#   geom_sf(data = mask_sf, fill = "white", color = "white") +
+#   theme_bw() 
 
 # Exemplo da documentação do pacote 
 
@@ -470,34 +501,4 @@ ggplot() +
 # coord_sf(crs = 3857) +
 # scale_fill_viridis_d(alpha = 0.7)
 
-# Histograma do mapa de incerteza -------------------------------------------------------------
-
-incerteza <- unique(values(mapa_incert_final))
-
-# Normalizar (0 a 1)
-
-incerteza_norm <- incerteza / 10000
-
-# Extrair valores para dataframe
-
-df <- as.data.frame(incerteza_norm, na.rm = TRUE)
-
-view(df)
-
-# Renomear a coluna (vem como layer name)
-
-names(df) <- "valor"
-
-# Verificar presença de NA na tabela
-
-unique(is.na(df))
-
-# Plotar histograma com ggplot2
-
-ggplot(df, aes(x = valor)) +
-  geom_histogram(fill = "steelblue", color = "white") +
-  labs(title = "Histograma da Incerteza",
-       x = "Incerteza (0–1)",
-       y = "Frequência") +
-  theme_minimal()
 

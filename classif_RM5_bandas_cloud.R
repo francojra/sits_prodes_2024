@@ -440,65 +440,109 @@ map_incerteza <- sits_uncertainty(
   multicores = 20,
   progress = TRUE)
 
+tempdir_r <- "mapa_incerteza_bandas_cloud_tiles1"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+map_incerteza <- sits_uncertainty(
+  cube = smooth_probs_rm5, # Arquivo do cubo de probabilidades com mosaico
+  type = "margin",
+  output_dir = tempdir_r,
+  exclusion_mask = mask_sf,
+  memsize = 85,
+  multicores = 20,
+  progress = TRUE)
+
+plot(map_incerteza)
+
 # Adicionar máscara ao mapa de incerteza ------------------------------------------------------------------------------------------------------------------
 
 ### OBSERVAÇÃO: a adição da máscara no QGIS é mais fácil e mantém a qualidade.
 
 ## Ler raster do mapa de incerteza e mapa da mascara
 
-mask_sf
+### Máscara
+
+mask_vect <- vect("PRODES_MARCO_2000_2023_RM5_Dissolvido.shp")
+
+### Mapa de incerteza
 
 mapa_incert_final <- rast("SENTINEL-2_MSI_MOSAIC_2024-01-01_2024-12-18_margin_v1.tif")
 class(mapa_incert_final)
 unique(values(mapa_incert_final))
-unique(is.na(values(mapa_incert_final))) # Mapa não tem valor NA
+unique(is.na(values(mapa_incert_final))) # Mapa não tem valor NA (isso ocorre porque a máscara foi excluída)
 
+mapa_inc1 <- rast("SENTINEL-2_MSI_033016_2024-01-01_2024-12-18_margin_v1.tif")
+mapa_inc2 <- rast("SENTINEL-2_MSI_033018_2024-01-01_2024-12-18_margin_v1.tif")
+mapa_inc3 <- rast("SENTINEL-2_MSI_034016_2024-01-01_2024-12-18_margin_v1.tif")
+mapa_inc4 <- rast("SENTINEL-2_MSI_034017_2024-01-01_2024-12-18_margin_v1.tif")
+mapa_inc5 <- rast("SENTINEL-2_MSI_034018_2024-01-01_2024-12-18_margin_v1.tif")
+mapa_inc6 <- rast("SENTINEL-2_MSI_035015_2024-01-01_2024-12-18_margin_v1.tif")
+mapa_inc7 <- rast("SENTINEL-2_MSI_035016_2024-01-01_2024-12-18_margin_v1.tif")
+mapa_inc8 <- rast("SENTINEL-2_MSI_035017_2024-01-01_2024-12-18_margin_v1.tif")
 
+# Reprojetar máscara para o CRS do tile (se necessário)
 
+if (!crs(mapa_inc1) == crs(mask_vect)) {
+  mask_vect <- project(mask_vect, mapa_inc1)
+}
+if (!crs(mapa_inc2) == crs(mask_vect)) {
+  mask_vect <- project(mask_vect, mapa_inc2)
+}
+if (!crs(mapa_inc3) == crs(mask_vect)) {
+  mask_vect <- project(mask_vect, mapa_inc3)
+}
+if (!crs(mapa_inc4) == crs(mask_vect)) {
+  mask_vect <- project(mask_vect, mapa_inc4)
+}
+if (!crs(mapa_inc5) == crs(mask_vect)) {
+  mask_vect <- project(mask_vect, mapa_inc5)
+}
+if (!crs(mapa_inc6) == crs(mask_vect)) {
+  mask_vect <- project(mask_vect, mapa_inc6)
+}
+if (!crs(mapa_inc7) == crs(mask_vect)) {
+  mask_vect <- project(mask_vect, mapa_inc7)
+}
+if (!crs(mapa_inc8) == crs(mask_vect)) {
+  mask_vect <- project(mask_vect, mapa_inc8)
+}
 
+# recortar a máscara ao tile (clip → mais eficiente)
+mask_tile1 <- crop(mask_vect, mapa_inc1)
+mask_tile2 <- crop(mask_vect, mapa_inc2)
+mask_tile3 <- crop(mask_vect, mapa_inc3)
+mask_tile4 <- crop(mask_vect, mapa_inc4)
+mask_tile5 <- crop(mask_vect, mapa_inc5)
+mask_tile6 <- crop(mask_vect, mapa_inc6)
+mask_tile7 <- crop(mask_vect, mapa_inc7)
+mask_tile8 <- crop(mask_vect, mapa_inc8)
 
+# aplicar a máscara (remover áreas dentro do polígono da máscara)
+unc_masked1 <- mask(mapa_inc1, mask_tile1, inverse = TRUE)
+unc_masked2 <- mask(mapa_inc2, mask_tile2, inverse = TRUE)
+unc_masked3 <- mask(mapa_inc3, mask_tile3, inverse = TRUE)
+unc_masked4 <- mask(mapa_inc4, mask_tile4, inverse = TRUE)
+unc_masked5 <- mask(mapa_inc5, mask_tile5, inverse = TRUE)
+unc_masked6 <- mask(mapa_inc6, mask_tile6, inverse = TRUE)
+unc_masked7 <- mask(mapa_inc7, mask_tile7, inverse = TRUE)
+unc_masked8 <- mask(mapa_inc8, mask_tile8, inverse = TRUE)
 
+# salvar o mapa com máscara em GeoTIFF
 
-
-
-
-
+writeRaster(unc_masked, "map_masked.tif", overwrite = TRUE)
+writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
+writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
+writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
+writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
+writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
+writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
+writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
+writeRaster(unc_masked1, "map_masked1.tif", overwrite = TRUE)
 
 # Histogramas do mapa de incerteza -------------------------------------------------------------
 
 
 
 
-
-
-# Definir maior valor de incerteza que é na área externa do mapa como NA
-
-#mapa_incert_final[mapa_incert_final == 10000] <- NA
-# 
-# library(tidyterra) # Pacote para inserir raster no ggplot2
-# library(RColorBrewer)
-# 
-# # Mapa ggplot2 da máscara
-# 
-# ggplot(mask_sf) +
-#   geom_sf(fill = "darkblue", color = "darkblue") 
-# 
-# # Mapa da máscara com mapa de incerteza
-# 
-# ggplot() +
-#   geom_spatraster(data = mapa_incert_final) + 
-#   scale_fill_gradient(low  = "#31a354",  # cor mais clara
-#                       high = "#67001f"   # cor mais escura
-#   ) +
-#   geom_sf(data = mask_sf, fill = "white", color = "white") +
-#   theme_bw() 
-
-# Exemplo da documentação do pacote 
-
-# ggplot(cyl_sf) +
-# geom_spatraster_rgb(data = tile) +
-# geom_sf(aes(fill = iso2)) +
-# coord_sf(crs = 3857) +
-# scale_fill_viridis_d(alpha = 0.7)
 
 

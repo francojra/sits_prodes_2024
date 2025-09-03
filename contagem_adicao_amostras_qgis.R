@@ -51,3 +51,50 @@ pontos_novos_df_agua <- pontos_novos_df |>
   filter(label == "agua")
 
 View(pontos_novos_df_agua)
+
+# Tile 034017 ---------------------------------------------------------------------------------------------------------------------------------------------
+
+# Carregar amostras
+
+amostras_originais1 <- sf::read_sf("amostras_originais_034017.shp")
+amostras_totais1 <- sf::read_sf("amostras_adicionais_034017.shp")
+
+View(amostras_originais1)
+View(amostras_totais1)
+
+# Extrair coordenadas e renomear
+
+totais_df <- amostras_totais %>%
+  mutate(longitude = st_coordinates(.)[,1],
+         latitude  = st_coordinates(.)[,2]) %>%
+  st_set_geometry(NULL)  # remove a geometria para virar data.frame
+
+originais_df <- amostras_originais %>%
+  mutate(longitude = st_coordinates(.)[,1],
+         latitude  = st_coordinates(.)[,2]) %>%
+  st_set_geometry(NULL)
+
+# Verificar as amostras que não estão contidas nas duas tabelas
+
+pontos_novos_df <- anti_join(totais_df, originais_df, by = c("longitude", "latitude"))
+
+View(pontos_novos_df)
+
+unique(pontos_novos_df$label)
+
+# Verificar novas amostras adicionadas por classes
+
+pontos_novos_df_ar <- pontos_novos_df |>
+  filter(label == "aflor_rocha")
+
+View(pontos_novos_df_ar)
+
+pontos_novos_df_sup <- pontos_novos_df |>
+  filter(label == "supressao")
+
+View(pontos_novos_df_sup)
+
+pontos_novos_df_agua <- pontos_novos_df |>
+  filter(label == "agua")
+
+View(pontos_novos_df_agua)

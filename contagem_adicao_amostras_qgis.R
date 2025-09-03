@@ -77,25 +77,69 @@ originais_df1 <- amostras_originais1 %>%
 
 # Verificar as amostras que não estão contidas nas duas tabelas
 
-pontos_novos_df <- anti_join(totais_df, originais_df, by = c("longitude", "latitude"))
+pontos_novos_df1 <- anti_join(totais_df1, originais_df1, 
+                              by = c("longitude", "latitude"))
 
-View(pontos_novos_df)
+View(pontos_novos_df1)
 
-unique(pontos_novos_df$label)
+unique(pontos_novos_df1$label)
 
 # Verificar novas amostras adicionadas por classes
 
-pontos_novos_df_ar <- pontos_novos_df |>
+pontos_novos_df_ar1 <- pontos_novos_df1 |>
   filter(label == "aflor_rocha")
 
-View(pontos_novos_df_ar)
+View(pontos_novos_df_ar1)
 
-pontos_novos_df_sup <- pontos_novos_df |>
+pontos_novos_df_veg1 <- pontos_novos_df1 |>
+  filter(label == "veg_natural")
+
+View(pontos_novos_df_veg1)
+
+# Tile 034018 ---------------------------------------------------------------------------------------------------------------------------------------------
+
+# Carregar amostras
+
+amostras_originais2 <- sf::read_sf("amostras_originais_034018.shp")
+amostras_totais2 <- sf::read_sf("amostras_adicionais_034018.shp")
+
+View(amostras_originais2)
+View(amostras_totais2)
+
+# Extrair coordenadas e renomear
+
+totais_df2 <- amostras_totais2 %>%
+  mutate(longitude = st_coordinates(.)[,1],
+         latitude  = st_coordinates(.)[,2]) %>%
+  st_set_geometry(NULL)  # remove a geometria para virar data.frame
+
+originais_df2 <- amostras_originais2 %>%
+  mutate(longitude = st_coordinates(.)[,1],
+         latitude  = st_coordinates(.)[,2]) %>%
+  st_set_geometry(NULL)
+
+# Verificar as amostras que não estão contidas nas duas tabelas
+
+pontos_novos_df2 <- anti_join(totais_df2, originais_df2, 
+                              by = c("longitude", "latitude"))
+
+View(pontos_novos_df2)
+
+unique(pontos_novos_df2$label)
+
+# Verificar novas amostras adicionadas por classes
+
+pontos_novos_df_ar2 <- pontos_novos_df2 |>
+  filter(label == "aflor_rocha")
+
+View(pontos_novos_df_ar2)
+
+pontos_novos_df_veg2 <- pontos_novos_df2 |>
+  filter(label == "veg_natural")
+
+View(pontos_novos_df_veg2)
+
+pontos_novos_df_sup2 <- pontos_novos_df2 |>
   filter(label == "supressao")
 
-View(pontos_novos_df_sup)
-
-pontos_novos_df_agua <- pontos_novos_df |>
-  filter(label == "agua")
-
-View(pontos_novos_df_agua)
+View(pontos_novos_df_sup2)

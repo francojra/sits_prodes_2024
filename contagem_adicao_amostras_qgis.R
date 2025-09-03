@@ -7,14 +7,16 @@ library(sf)
 
 # Tile 035016 ---------------------------------------------------------------------------------------------------------------------------------------------
 
-amostras_originais <- sf::read_sf("amostras_originais_tile_035016.shp")
+# Carregar amostras
 
+amostras_originais <- sf::read_sf("amostras_originais_tile_035016.shp")
 amostras_totais <- sf::read_sf("amostras_adicionais_035016.shp")
 
 View(amostras_originais)
 View(amostras_totais)
 
 # Extrair coordenadas e renomear
+
 totais_df <- amostras_totais %>%
   mutate(longitude = st_coordinates(.)[,1],
          latitude  = st_coordinates(.)[,2]) %>%
@@ -35,7 +37,6 @@ pontos_novos_df_ar <- pontos_novos_df |>
   filter(label == "aflor_rocha")
 
 View(pontos_novos_df_ar)
-  
   
 pontos_novos_df_sup <- pontos_novos_df |>
   filter(label == "supressao")

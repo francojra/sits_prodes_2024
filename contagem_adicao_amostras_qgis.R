@@ -4,6 +4,7 @@
 # Carregar pacotes ----------------------------------------------------------------------------------------------------------------------------------------
 
 library(sf)
+library(tidyverse)
 
 # Tile 035016 ---------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -64,12 +65,12 @@ View(amostras_totais1)
 
 # Extrair coordenadas e renomear
 
-totais_df <- amostras_totais %>%
+totais_df1 <- amostras_totais1 %>%
   mutate(longitude = st_coordinates(.)[,1],
          latitude  = st_coordinates(.)[,2]) %>%
   st_set_geometry(NULL)  # remove a geometria para virar data.frame
 
-originais_df <- amostras_originais %>%
+originais_df1 <- amostras_originais1 %>%
   mutate(longitude = st_coordinates(.)[,1],
          latitude  = st_coordinates(.)[,2]) %>%
   st_set_geometry(NULL)
